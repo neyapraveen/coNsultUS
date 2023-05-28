@@ -281,7 +281,7 @@ const HomeScreen = () => {
           style={{ flexDirection: "row", alignItems: "center", padding: 10 }}
         >
           <Image
-            source={require("C:/Windows/System32/coNsultUS/assets/logo.png")}
+            source={require("../assets/logo.png")}
             style={{ width: 50, height: 50 }}
           />
           <View>
