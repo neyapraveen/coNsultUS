@@ -258,7 +258,7 @@ const HomeScreen = () => {
             <Text
               style={{ fontSize: 18, fontWeight: "bold", color: "#7072d5" }}
             >
-              {selectedTime} Meeting with {selectedStaff} ({selectedModule})
+              Meeting with {selectedStaff} ({selectedModule})
             </Text>
           </View>
 
