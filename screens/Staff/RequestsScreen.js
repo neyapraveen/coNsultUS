@@ -4,14 +4,16 @@ import {
   Image,
   Text,
   FlatList,
-  Pressable,
+  TouchableOpacity,
   StyleSheet,
+  Pressable,
 } from "react-native";
 import { grey, white } from "../../components/Constants";
 import { useNavigation } from "@react-navigation/native";
 
 const RequestsScreen = () => {
   const [consultationRequests, setConsultationRequests] = useState([]);
+  const [acceptedRequests, setAcceptedRequests] = useState([]);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -19,43 +21,43 @@ const RequestsScreen = () => {
     const data = [
       {
         id: "1",
-        patientName: "John Doe",
+        name: "John Doe",
         date: "2023-09-21",
         time: "10:00 AM",
       },
       {
         id: "2",
-        patientName: "Jane Smith",
+        name: "Jane Smith",
         date: "2023-08-22",
         time: "02:00 PM",
       },
       {
         id: "3",
-        patientName: "Max Lee",
+        name: "Max Lee",
         date: "2023-07-19",
         time: "2:00 PM",
       },
       {
         id: "4",
-        patientName: "Andy Williams",
+        name: "Andy Williams",
         date: "2023-07-25",
         time: "12:00 PM",
       },
       {
         id: "5",
-        patientName: "Jonathan Song",
+        name: "Jonathan Song",
         date: "2023-07-5",
         time: "5:00 PM",
       },
       {
         id: "6",
-        patientName: "Phyllis Key",
+        name: "Phyllis Key",
         date: "2023-08-05",
         time: "10:00 AM",
       },
       {
         id: "7",
-        patientName: "Fairy Gomez",
+        name: "Fairy Gomez",
         date: "2023-08-20",
         time: "2:00 PM",
       },
@@ -71,23 +73,23 @@ const RequestsScreen = () => {
       ]}
     >
       <View>
-        <Text style={styles.requestItemText}>{item.patientName}</Text>
+        <Text style={styles.requestItemText}>{item.name}</Text>
         <Text style={styles.requestItemText}>{item.date}</Text>
         <Text style={styles.requestItemText}>{item.time}</Text>
       </View>
       <View style={styles.buttonsContainer}>
-        <Pressable
+        <TouchableOpacity
           style={styles.requestAcceptButton}
           onPress={() => handleAcceptConsultation(item)}
         >
           <Text style={styles.buttonText}>Accept</Text>
-        </Pressable>
-        <Pressable
+        </TouchableOpacity>
+        <TouchableOpacity
           style={styles.requestRejectButton}
           onPress={() => handleRejectConsultation(item)}
         >
           <Text style={styles.buttonText}>Reject</Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -95,11 +97,14 @@ const RequestsScreen = () => {
   const handleRejectConsultation = (item) => {
     // Mark the consultation request as rejected
     console.log("Rejected");
+    item.status = "rejected";
   };
 
   const handleAcceptConsultation = (item) => {
     // Mark the consultation request as rejected
     console.log("Accepted");
+    item.status = "accepted";
+    setAcceptedRequests([...acceptedRequests, item]);
   };
 
   return (

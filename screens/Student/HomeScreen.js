@@ -10,8 +10,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useContext } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import BookingContext from "../components/BookingContext";
 import { useNavigation } from "@react-navigation/native";
+import BookingContext from "../../components/BookingContext";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -281,7 +281,7 @@ const HomeScreen = () => {
           style={{ flexDirection: "row", alignItems: "center", padding: 10 }}
         >
           <Image
-            source={require("../assets/logo.png")}
+            source={require("../../assets/logo.png")}
             style={{ width: 50, height: 50 }}
           />
           <View>
@@ -290,7 +290,7 @@ const HomeScreen = () => {
           </View>
 
           <Pressable
-            onPress={() => navigation.navigate("Profile")}
+            onPress={() => navigation.navigate("StudentProfile")}
             style={{ marginLeft: "auto", marginRight: 7 }}
           >
             <Image

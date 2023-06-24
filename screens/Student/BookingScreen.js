@@ -11,7 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useContext } from "react";
 import HorizontalDatepicker from "@awrminkhodaei/react-native-horizontal-datepicker";
 import { useNavigation } from "@react-navigation/native";
-import BookingContext from "../components/BookingContext";
+import BookingContext from "../../components/BookingContext";
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -124,7 +124,6 @@ const BookingScreen = () => {
     <>
       <ScrollView style={{ flex: 1, marginTop: 30 }}>
         <SafeAreaView>
-         
           {/* Top Section */}
           <>
             <View
@@ -135,7 +134,7 @@ const BookingScreen = () => {
               }}
             >
               <Image
-                source={require("../assets/logo.png")}
+                source={require("../../assets/logo.png")}
                 style={{ width: 50, height: 50 }}
               />
               <View>

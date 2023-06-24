@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Agenda } from "react-native-calendars";
-import BookingContext from "../components/BookingContext";
+import BookingContext from "../../components/BookingContext";
+import { purple, grey, white, yellow, black } from "../../components/Constants";
 import moment from "moment";
 
 const CalendarScreen = () => {
@@ -80,15 +81,13 @@ const CalendarScreen = () => {
       renderEmptyData={renderEmptyData}
       theme={{
         todayTextColor:
-          selectedDate !== moment().format("YYYY-MM-DD")
-            ? "#7072d5"
-            : "#FFFFFF",
-        selectedDayBackgroundColor: "#7072d5",
-        dotColor: "#7072d5",
-        agendaDayTextColor: "black",
-        agendaDayNumColor: "black",
-        agendaTodayColor: "black",
-        agendaKnobColor: "#7072d5",
+          selectedDate !== moment().format("YYYY-MM-DD") ? purple : "#FFFFFF",
+        selectedDayBackgroundColor: purple,
+        dotColor: purple,
+        agendaDayTextColor: black,
+        agendaDayNumColor: black,
+        agendaTodayColor: black,
+        agendaKnobColor: purple,
       }}
     />
   );
@@ -96,7 +95,7 @@ const CalendarScreen = () => {
 
 const styles = StyleSheet.create({
   eventContainer: {
-    backgroundColor: "#F4D79A",
+    backgroundColor: yellow,
     borderRadius: 10,
     padding: 10,
     marginVertical: 4,

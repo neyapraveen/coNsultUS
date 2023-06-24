@@ -4,7 +4,7 @@ import Background from "../components/Background";
 import Button from "../components/Button";
 import { black, purple, yellow } from "../components/Constants.js";
 
-const Home = (props) => {
+const Welcome = (props) => {
   return (
     <Background>
       <View style={{ marginHorizontal: 40, marginVertical: 100 }}>
@@ -31,4 +31,4 @@ const Home = (props) => {
   );
 };
 
-export default Home;
+export default Welcome;

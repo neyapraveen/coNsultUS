@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Button from "../../components/Button";
 import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Calendar } from "react-native-calendars";
@@ -7,7 +6,6 @@ import { format } from "date-fns";
 import { grey, purple, yellow, white, black } from "../../components/Constants";
 import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native";
-import RequestsScreen from "./RequestsScreen";
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -82,7 +80,7 @@ const OfficeHoursScreen = () => {
 
   const handleConfirm = () => {
     if (!isConfirmDisabled) {
-      navigation.navigate("Requests");
+      navigation.navigate("Dashboard");
     } else {
       // Show warning message
       console.log("Please select at least one date and one time.");
@@ -235,6 +233,7 @@ const styles = StyleSheet.create({
     backgroundColor: purple,
     borderRadius: 100,
     alignItems: "center",
+    justifyContent: "center",
     width: 350,
     paddingVertical: 10,
     marginVertical: 5,

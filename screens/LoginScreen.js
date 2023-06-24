@@ -1,14 +1,19 @@
 import React from "react";
-import { View, Text, Touchable, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Touchable,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import Background from "../components/Background";
 import Button from "../components/Button";
 import { black, purple } from "../components/Constants";
 import Field from "../components/Field";
-import OfficeHoursScreen from "./Staff/OfficeHoursScreen";
 
 const Login = (props) => {
   return (
-    <Background>
+    <Background style={styles.imageBackground}>
       <View style={{ alignItems: "center", width: 460 }}>
         <Text
           style={{
@@ -70,7 +75,7 @@ const Login = (props) => {
             textColor="white"
             bgColor={purple}
             btnLabel="Login as teacher"
-            Press={() => props.navigation.navigate("OfficeHours")}
+            Press={() => props.navigation.navigate("Dashboard")}
           />
           <View
             style={{
@@ -95,5 +100,23 @@ const Login = (props) => {
     </Background>
   );
 };
+
+const styles = StyleSheet.create({
+  imageBackground: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+  },
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  text: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "white",
+  },
+});
 
 export default Login;

@@ -1,7 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "../screens/HomeScreen";
-import CalendarScreen from "../screens/CalendarScreen";
+import HomeScreen from "../screens/Student/HomeScreen";
+import CalendarScreen from "../screens/Student/CalendarScreen";
 import { Ionicons } from "react-native-vector-icons";
 
 const Tab = createBottomTabNavigator();

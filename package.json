@@ -26,6 +26,7 @@
     "react-native-calendars": "^1.1299.0",
     "react-native-datepicker": "^1.7.2",
     "react-native-ico-material-design": "^3.3.1",
+    "react-native-ionicons": "^4.6.5",
     "react-native-modal-datetime-picker": "^15.0.1",
     "react-native-svg": "^13.9.0",
     "react-native-vector-icons": "^9.2.0"

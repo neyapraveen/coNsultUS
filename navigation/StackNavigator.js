@@ -4,12 +4,17 @@ import TabNavigator from "./TabNavigator";
 import WelcomeScreen from "../screens/WelcomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignupScreen";
-import BookingScreen from "../screens/BookingScreen";
-import ProfileScreen from "../screens/ProfileScreen";
-import BookingContext from "../components/BookingContext";
-import OfficeHoursScreen from "../screens/Staff/OfficeHoursScreen";
-import RequestsScreen from "../screens/Staff/RequestsScreen";
+import BookingScreen from "../screens/Student/BookingScreen";
+import StudentProfileScreen from "../screens/Student/StudentProfileScreen";
 import DashboardScreen from "../screens/Staff/DashboardScreen";
+import OfficeHoursScreen from "../screens/Staff/OfficeHoursScreen";
+import CalendarViewScreen from "../screens/Staff/CalendarViewScreen";
+import RequestsScreen from "../screens/Staff/RequestsScreen";
+import StaffProfileScreen from "../screens/Staff/StaffProfileScreen";
+import AnnouncementsScreen from "../screens/Staff/AnnouncementsScreen";
+
+import BookingContext from "../components/BookingContext";
+import { RequestsProvider } from "../components/RequestsContext";
 
 const Stack = createStackNavigator();
 
@@ -58,8 +63,8 @@ const StackNavigator = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Profile"
-          component={ProfileScreen}
+          name="StudentProfile"
+          component={StudentProfileScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -75,6 +80,21 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Dashboard"
           component={DashboardScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="StaffProfile"
+          component={StaffProfileScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CalendarView"
+          component={CalendarViewScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Announcements"
+          component={AnnouncementsScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
