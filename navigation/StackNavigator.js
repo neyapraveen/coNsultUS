@@ -7,6 +7,7 @@ import SignupScreen from "../screens/SignupScreen";
 import BookingScreen from "../screens/BookingScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import BookingContext from "../components/BookingContext";
+import OfficeHoursScreen from "../screens/Staff/OfficeHoursScreen";
 
 const Stack = createStackNavigator();
 
@@ -57,6 +58,11 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Profile"
           component={ProfileScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="OfficeHours"
+          component={OfficeHoursScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

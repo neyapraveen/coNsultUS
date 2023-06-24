@@ -4,6 +4,7 @@ import Background from "../components/Background";
 import Button from "../components/Button";
 import { black, purple } from "../components/Constants";
 import Field from "../components/Field";
+import OfficeHoursScreen from "./Staff/OfficeHoursScreen";
 
 const Login = (props) => {
   return (
@@ -56,7 +57,7 @@ const Login = (props) => {
             }}
           >
             <Text style={{ color: purple, fontWeight: "bold", fontSize: 16 }}>
-              Forgot Password ?
+              Forgot Password?
             </Text>
           </View>
           <Button
@@ -69,7 +70,7 @@ const Login = (props) => {
             textColor="white"
             bgColor={purple}
             btnLabel="Login as teacher"
-            Press={() => props.navigation.navigate("Tabs")}
+            Press={() => props.navigation.navigate("OfficeHours")}
           />
           <View
             style={{
