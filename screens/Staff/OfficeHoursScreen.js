@@ -1,17 +1,13 @@
-import React, { useState, useContext } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  FlatList,
-} from "react-native";
+import React, { useState, useEffect } from "react";
+import Button from "../../components/Button";
+import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Calendar, CalendarList, Agenda } from "react-native-calendars";
+import { Calendar } from "react-native-calendars";
 import { format } from "date-fns";
 import { grey, purple, yellow, white, black } from "../../components/Constants";
-import { G } from "react-native-svg";
+import { useNavigation } from "@react-navigation/native";
+import { TouchableOpacity } from "react-native";
+import RequestsScreen from "./RequestsScreen";
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -21,24 +17,10 @@ function formatDate(date) {
   return year + "-" + month + "-" + day;
 }
 
-const ConfirmButton = ({ onPress }) => {
-  return (
-    <Pressable
-      style={{
-        backgroundColor: { purple },
-        padding: 10,
-        borderRadius: 7,
-      }}
-      onPress={onPress}
-    >
-      <Text style={{ fontSize: 20, fontWeight: "800", color: white }}>
-        Confirm
-      </Text>
-    </Pressable>
-  );
-};
-
 const OfficeHoursScreen = () => {
+  /* Constants */
+  const navigation = useNavigation();
+
   const times = [
     {
       id: "0800",
@@ -84,113 +66,152 @@ const OfficeHoursScreen = () => {
 
   const [selectedDates, setSelectedDates] = useState({});
   const [selectedTimes, setSelectedTimes] = useState([]);
+  const [isConfirmDisabled, setIsConfirmDisabled] = useState(true);
 
   const today = new Date();
   const minDate = format(today, "yyyy-MM-dd");
 
+  useEffect(() => {
+    // Check if at least one date and one time is selected
+    if (Object.keys(selectedDates).length > 0 && selectedTimes.length > 0) {
+      setIsConfirmDisabled(false);
+    } else {
+      setIsConfirmDisabled(true);
+    }
+  }, [selectedDates, selectedTimes]);
+
+  const handleConfirm = () => {
+    if (!isConfirmDisabled) {
+      navigation.navigate("Requests");
+    } else {
+      // Show warning message
+      console.log("Please select at least one date and one time.");
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.titleText}>Select/Edit Available Office Hours</Text>
-      </View>
-
-      {/* Selecting a Date */}
+      {/* Header */}
       <>
-        <Text
-          style={{
-            fontSize: 16,
-            fontWeight: "500",
-            marginHorizontal: 10,
-            marginTop: 10,
-          }}
-        >
-          Choose date(s)
-        </Text>
-        <Calendar
-          style={{
-            borderWidth: 1,
-            borderColor: "gray",
-            height: 350,
-            marginHorizontal: 10,
-            marginTop: 5,
-            borderRadius: 10,
-          }}
-          markedDates={selectedDates}
-          onDayPress={(day) => {
-            const { dateString } = day;
-            const selected = !selectedDates[dateString];
-            const updatedDates = {
-              ...selectedDates,
-              [dateString]: { selected },
-            };
-            setSelectedDates(updatedDates);
-          }}
-          markingType="multi-dot"
-          minDate={minDate}
-          theme={{
-            calendarBackground: grey,
-            selectedDayBackgroundColor: purple,
-            selectedDayTextColor: white,
-            todayTextColor: purple,
-            arrowColor: yellow,
-          }}
-        />
-      </>
-
-      {/* Selecting a Time */}
-      <>
-        <Text
-          style={{
-            fontSize: 16,
-            fontWeight: "500",
-            marginHorizontal: 10,
-            marginVertical: 10,
-          }}
-        >
-          Choose time(s)
-        </Text>
-        <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
-          {times.map((item, index) => (
-            <Pressable
-              key={item.id}
-              onPress={() => {
-                if (selectedTimes.includes(item.time)) {
-                  setSelectedTimes(
-                    selectedTimes.filter((time) => time !== item.time)
-                  );
-                } else {
-                  setSelectedTimes([...selectedTimes, item.time]);
-                }
-              }}
-              style={[
-                {
-                  margin: 10,
-                  borderRadius: 7,
-                  padding: 15,
-                  backgroundColor: selectedTimes.includes(item.time)
-                    ? purple
-                    : grey,
-                },
-                {
-                  width: "45%",
-                  alignItems: "center",
-                  justifyContent: "center",
-                },
-              ]}
-            >
-              <Text
-                style={
-                  selectedTimes.includes(item.time)
-                    ? { color: white }
-                    : { color: black }
-                }
-              >
-                {item.time}
-              </Text>
-            </Pressable>
-          ))}
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>
+            Select/Edit Available Office Hours
+          </Text>
         </View>
       </>
+
+      <ScrollView>
+        {/* Selecting a Date */}
+        <>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "500",
+              marginHorizontal: 10,
+              marginTop: 10,
+            }}
+          >
+            Choose date(s)
+          </Text>
+          <Calendar
+            style={{
+              borderWidth: 1,
+              borderColor: "gray",
+              height: 350,
+              marginHorizontal: 10,
+              marginTop: 5,
+              borderRadius: 10,
+            }}
+            markedDates={selectedDates}
+            onDayPress={(day) => {
+              const { dateString } = day;
+              const selected = !selectedDates[dateString];
+              const updatedDates = {
+                ...selectedDates,
+                [dateString]: { selected },
+              };
+              setSelectedDates(updatedDates);
+            }}
+            markingType="multi-dot"
+            minDate={minDate}
+            theme={{
+              calendarBackground: grey,
+              selectedDayBackgroundColor: yellow,
+              selectedDayTextColor: white,
+              todayTextColor: purple,
+              arrowColor: purple,
+            }}
+          />
+        </>
+
+        {/* Selecting a Time */}
+        <>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "500",
+              marginHorizontal: 10,
+              marginVertical: 10,
+            }}
+          >
+            Choose time(s)
+          </Text>
+          <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
+            {times.map((item, index) => (
+              <Pressable
+                key={item.id}
+                onPress={() => {
+                  if (selectedTimes.includes(item.time)) {
+                    setSelectedTimes(
+                      selectedTimes.filter((time) => time !== item.time)
+                    );
+                  } else {
+                    setSelectedTimes([...selectedTimes, item.time]);
+                  }
+                }}
+                style={[
+                  {
+                    margin: 10,
+                    borderRadius: 7,
+                    padding: 15,
+                    backgroundColor: selectedTimes.includes(item.time)
+                      ? yellow
+                      : grey,
+                  },
+                  {
+                    width: "45%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  },
+                ]}
+              >
+                <Text
+                  style={
+                    selectedTimes.includes(item.time)
+                      ? { color: white }
+                      : { color: black }
+                  }
+                >
+                  {item.time}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        </>
+
+        {/* Continuation Prompt */}
+
+        <TouchableOpacity
+          onPress={handleConfirm}
+          style={[
+            styles.confirmButton,
+            { backgroundColor: isConfirmDisabled ? "grey" : purple },
+          ]}
+          disabled={isConfirmDisabled}
+        >
+          <Text style={styles.confirmButtonText}>Confirm Selections</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -200,7 +221,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   titleContainer: {
-    backgroundColor: yellow,
+    backgroundColor: purple,
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 10,
@@ -209,6 +230,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
     color: white,
+  },
+  confirmButton: {
+    backgroundColor: purple,
+    borderRadius: 100,
+    alignItems: "center",
+    width: 350,
+    paddingVertical: 10,
+    marginVertical: 5,
+  },
+  confirmButtonText: {
+    color: white,
+    fontSize: 25,
+    fontWeight: "bold",
   },
 });
 
