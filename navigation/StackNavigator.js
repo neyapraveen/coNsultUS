@@ -6,6 +6,7 @@ import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignupScreen";
 import BookingScreen from "../screens/BookingScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import ResetScreen from "../screens/ResetScreen";
 import BookingContext from "../components/BookingContext";
 import OfficeHoursScreen from "../screens/Staff/OfficeHoursScreen";
 import RequestsScreen from "../screens/Staff/RequestsScreen";
@@ -41,6 +42,11 @@ const StackNavigator = () => {
           name="Login"
           component={LoginScreen}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ResetPw"
+          component={ResetScreen}
+          options={{ headershown: false }}
         />
         <Stack.Screen
           name="Signup"
