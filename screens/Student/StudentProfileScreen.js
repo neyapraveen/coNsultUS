@@ -6,15 +6,19 @@ import { useNavigation } from "@react-navigation/native";
 const StudentProfileScreen = () => {
   const navigation = useNavigation();
   const handleViewPastConsultations = () => {
-    // Navigate to PastCosultatins Screen
+    navigation.navigate("PastAppointments");
   };
 
-  const handleCancelUpcomingConsultations = () => {
-    // Navigate to UpcomingCosultatins Screen
+  const handleCancelledAppointments = () => {
+    navigation.navigate("RejectedAppointments");
   };
 
   const handleReportIssue = () => {
-    // Navigate to ReportScreen
+    navigation.navigate("ReportIssue");
+  };
+
+  const handleResetPassword = () => {
+    navigation.navigate("ResetPw");
   };
 
   const handleLogout = () => {
@@ -30,7 +34,7 @@ const StudentProfileScreen = () => {
         style={styles.profileImage}
       />
       <Text style={styles.nameText}>Name Here</Text>
-      <Text style={styles.roleText}>Student</Text>
+      <Text style={styles.roleText}>Staff</Text>
 
       <TouchableOpacity
         style={styles.button}
@@ -41,16 +45,15 @@ const StudentProfileScreen = () => {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={handleCancelUpcomingConsultations}
+        onPress={handleCancelledAppointments}
       >
-        <Text style={styles.buttonText}>Cancel Upcoming Consultations</Text>
+        <Text style={styles.buttonText}>Cancelled Appointments</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.button} onPress={handleReportIssue}>
         <Text style={styles.buttonText}>Report an Issue</Text>
       </TouchableOpacity>
-
-      <TouchableOpacity style={styles.button} onPress={handleReportIssue}>
+      <TouchableOpacity style={styles.button} onPress={handleResetPassword}>
         <Text style={styles.buttonText}>Reset Password</Text>
       </TouchableOpacity>
 

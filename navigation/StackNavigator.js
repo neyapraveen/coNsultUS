@@ -12,6 +12,10 @@ import CalendarViewScreen from "../screens/Staff/CalendarViewScreen";
 import RequestsScreen from "../screens/Staff/RequestsScreen";
 import StaffProfileScreen from "../screens/Staff/StaffProfileScreen";
 import AnnouncementsScreen from "../screens/Staff/AnnouncementsScreen";
+import ResetPw from "../screens/ResetScreen";
+import PastAppointments from "../screens/PastAppointments";
+import RejectedAppointments from "../screens/RejectedAppointments";
+import ReportIssueScreen from "../screens/ReportIssue";
 
 import BookingContext from "../components/BookingContext";
 import { RequestsProvider } from "../components/RequestsContext";
@@ -95,6 +99,26 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Announcements"
           component={AnnouncementsScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ResetPw"
+          component={ResetPw}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="PastAppointments"
+          component={PastAppointments}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="RejectedAppointments"
+          component={RejectedAppointments}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ReportIssue"
+          component={ReportIssueScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

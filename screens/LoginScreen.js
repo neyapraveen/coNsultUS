@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Background from "../components/Background";
 import Button from "../components/Button";
 import { black, purple } from "../components/Constants";
@@ -61,10 +62,15 @@ const Login = (props) => {
               marginBottom: 200,
             }}
           >
-            <Text style={{ color: purple, fontWeight: "bold", fontSize: 16 }}>
-              Forgot Password?
-            </Text>
+            <TouchableOpacity
+              onPress={() => props.navigation.navigate("ResetPw")}
+            >
+              <Text style={{ color: purple, fontWeight: "bold", fontSize: 16 }}>
+                Forgot Password ?
+              </Text>
+            </TouchableOpacity>
           </View>
+
           <Button
             textColor="white"
             bgColor={purple}

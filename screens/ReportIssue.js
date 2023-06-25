@@ -1,45 +1,46 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
-import Background from "../../components/Background";
-import { grey, yellow, white } from "../../components/Constants";
+import Background from "../components/Background";
+import { purple, grey, yellow, black, white } from "../components/Constants";
 import { useNavigation } from "@react-navigation/native";
 
-const AnnouncementsScreen = () => {
-  const [announcement, setAnnouncement] = useState("");
+const ReportIssueScreen = () => {
+  const [issue, setIssue] = useState("");
   const navigation = useNavigation();
-  const handleSendAnnouncement = () => {
-    // Handle sending the announcement logic here
-    console.log("Sending announcement:", announcement);
+
+  const handleReportIssue = () => {
+    // Handle reporting the issue logic here
+    console.log("Reporting issue:", issue);
     // Reset the input field
-    setAnnouncement("");
+    setIssue("");
     navigation.navigate("Dashboard");
   };
 
-  const isSendButtonDisabled = announcement.trim() === "";
+  const isSubmitButtonDisabled = issue.trim() === "";
 
   return (
     <Background>
       <View style={styles.container}>
-        <Text style={styles.heading}>Send Announcement</Text>
+        <Text style={styles.heading}>Report an Issue</Text>
         <View style={styles.inputContainer}>
           <TextInput
             multiline={true}
             numberOfLines={10}
             style={styles.input}
-            placeholder="Type your announcement here"
-            value={announcement}
-            onChangeText={(text) => setAnnouncement(text)}
+            placeholder="Type your issue here"
+            value={issue}
+            onChangeText={(text) => setIssue(text)}
           />
         </View>
         <Pressable
           style={[
-            styles.sendButton,
-            { backgroundColor: isSendButtonDisabled ? grey : yellow },
+            styles.submitButton,
+            { backgroundColor: isSubmitButtonDisabled ? grey : yellow },
           ]}
-          onPress={handleSendAnnouncement}
-          disabled={isSendButtonDisabled}
+          onPress={handleReportIssue}
+          disabled={isSubmitButtonDisabled}
         >
-          <Text style={styles.buttonText}>Send</Text>
+          <Text style={styles.buttonText}>Submit</Text>
         </Pressable>
       </View>
     </Background>
@@ -52,11 +53,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   heading: {
-    fontSize: 40,
+    fontSize: 52,
     fontWeight: "bold",
     marginTop: 20,
     marginBottom: 10,
-    color: white,
+    color: yellow,
     padding: 10,
   },
   inputContainer: {
@@ -64,6 +65,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: grey,
     borderRadius: 20,
+    marginLeft: 10,
   },
   input: {
     height: 200,
@@ -71,17 +73,18 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     fontSize: 16,
-    height: 600,
     textAlignVertical: "top",
+    marginLeft: 10,
   },
-  sendButton: {
+  submitButton: {
     backgroundColor: yellow,
     borderRadius: 5,
     paddingVertical: 10,
     paddingHorizontal: 20,
     alignItems: "center",
     justifyContent: "center",
-    width: 375,
+    width: "100%",
+    marginLeft: 10,
   },
   buttonText: {
     color: white,
@@ -90,4 +93,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AnnouncementsScreen;
+export default ReportIssueScreen;
