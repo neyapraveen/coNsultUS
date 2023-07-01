@@ -8,7 +8,7 @@ const Home = (props) => {
     <Background>
       <View style={styles.container}>
         <Image
-          source={require("./assets/logo.png")}
+          source={require("../assets/nameLogo.png")}
           style={styles.logoImage}
         />
         <Button
