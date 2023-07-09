@@ -11,26 +11,41 @@ import Button from "../components/Button";
 import { black, purple, yellow } from "../components/Constants";
 import Field from "../components/Field";
 import OfficeHoursScreen from "./Staff/OfficeHoursScreen";
+import { auth } from "../firebase";
 // import axios from "axios";
 
 const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const handleLoginStudent = async () => {
-    if (email.endsWith("@u.nus.edu")) {
-      // Email ends with "@u.nus.edu", proceed with login
-      // You can perform the login logic here
-      // const resp = await axios.post("http://localhost:8080/api/signin", {
-      //   email,
-      //   password,
-      // });
-      // console.log(resp.data);
-      props.navigation.navigate("Tabs");
-      alert("Logged In as Student");
-    } else {
-      // Email does not end with "@u.nus.edu", show error message
-      alert("Invalid email format. Please enter a valid @u.nus.edu email.");
-    }
+    // const resp = await axios.post("http://localhost:8080/api/signin", {
+    //   email,
+    //   password,
+    // });
+    // console.log(resp.data);
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then((userCredentials) => {
+        const user = userCredentials.user;
+        console.log("Logged in with", user.email);
+        props.navigation.navigate("Tabs");
+      })
+      .catch((error) => alert(error.message));
+  };
+
+  const handleResetPassword = async () => {
+    // Request password reset email
+    auth
+      .sendPasswordResetEmail(email)
+      .then(() => {
+        // Password reset email sent successfully
+        console.log("Password reset email sent");
+        alert("Password reset email sent.");
+      })
+      .catch((error) => {
+        // An error occurred while sending the password reset email
+        alert(error.message);
+      });
   };
 
   const handleLoginTeacher = () => {
@@ -96,7 +111,12 @@ const Login = (props) => {
             value={email}
             onChangeText={(text) => setEmail(text)}
           />
-          <Field placeholder="Password" secureTextEntry={true} />
+          <Field
+            placeholder="Password"
+            secureTextEntry={true}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+          />
           <View
             style={{
               alignItems: "flex-end",
@@ -105,9 +125,7 @@ const Login = (props) => {
               marginBottom: 200,
             }}
           >
-            <TouchableOpacity
-              onPress={() => props.navigation.navigate("ResetPw")}
-            >
+            <TouchableOpacity onPress={handleResetPassword}>
               <Text style={{ color: purple, fontWeight: "bold", fontSize: 16 }}>
                 Forgot Password ?
               </Text>

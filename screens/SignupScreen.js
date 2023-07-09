@@ -10,6 +10,7 @@ import Background from "../components/Background";
 import Button from "../components/Button";
 import { purple, yellow } from "../components/Constants";
 import Field from "../components/Field";
+import { auth } from "../firebase";
 
 const Signup = (props) => {
   const [email, setEmail] = useState("");
@@ -25,9 +26,19 @@ const Signup = (props) => {
       }
       if (password === confirmPassword) {
         // Passwords match, create the account
-        // You can perform the account creation logic here
         //await axios.post("http://localhost:8080/api/signin", { email, password });
         alert("Account created");
+        auth
+          .createUserWithEmailAndPassword(email, password)
+          .then((userCredentials) => {
+            const user = userCredentials.user;
+            console.log("User registered with" & user.email);
+            user.sendEmailVerification().then(() => {
+              console.log("Confirmation email sent");
+            });
+          })
+          .catch((error) => alert(error.message));
+
         props.navigation.navigate("Login");
       } else {
         // Passwords do not match, show error message
