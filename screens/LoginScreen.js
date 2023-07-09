@@ -1,34 +1,67 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   Touchable,
-  StyleSheet,
   TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Background from "../components/Background";
 import Button from "../components/Button";
-import { black, purple } from "../components/Constants";
+import { black, purple, yellow } from "../components/Constants";
 import Field from "../components/Field";
+import OfficeHoursScreen from "./Staff/OfficeHoursScreen";
+// import axios from "axios";
 
 const Login = (props) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const handleLoginStudent = async () => {
+    if (email.endsWith("@u.nus.edu")) {
+      // Email ends with "@u.nus.edu", proceed with login
+      // You can perform the login logic here
+      // const resp = await axios.post("http://localhost:8080/api/signin", {
+      //   email,
+      //   password,
+      // });
+      // console.log(resp.data);
+      props.navigation.navigate("Tabs");
+      alert("Logged In as Student");
+    } else {
+      // Email does not end with "@u.nus.edu", show error message
+      alert("Invalid email format. Please enter a valid @u.nus.edu email.");
+    }
+  };
+
+  const handleLoginTeacher = () => {
+    if (email.endsWith("@u.nus.edu")) {
+      // Email ends with "@u.nus.edu", proceed with login
+      // You can perform the login logic here
+      props.navigation.navigate("OfficeHours");
+      alert("Logged In as Teacher");
+    } else {
+      // Email does not end with "@u.nus.edu", show error message
+      alert("Invalid email format. Please enter a valid @u.nus.edu email.");
+    }
+  };
+
   return (
-    <Background style={styles.imageBackground}>
-      <View style={{ alignItems: "center", width: 460 }}>
+    <Background>
+      <SafeAreaView style={{ alignItems: "center", width: 460 }}>
         <Text
           style={{
             color: "white",
             fontSize: 64,
             fontWeight: "bold",
             marginVertical: 20,
+            textAlign: "center",
           }}
         >
           Login
         </Text>
         <View
           style={{
-            backgroundColor: "white",
+            backgroundColor: yellow,
             height: 700,
             width: 460,
             borderTopLeftRadius: 130,
@@ -36,7 +69,14 @@ const Login = (props) => {
             alignItems: "center",
           }}
         >
-          <Text style={{ fontSize: 40, color: black, fontWeight: "bold" }}>
+          <Text
+            style={{
+              fontSize: 40,
+              color: black,
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
             Welcome Back
           </Text>
           <Text
@@ -45,13 +85,16 @@ const Login = (props) => {
               fontSize: 19,
               fontWeight: "bold",
               marginBottom: 20,
+              textAlign: "center",
             }}
           >
             Login to your account
           </Text>
           <Field
-            placeholder="Email / Username"
+            placeholder="NUSNET Email"
             keyboardType={"email-address"}
+            value={email}
+            onChangeText={(text) => setEmail(text)}
           />
           <Field placeholder="Password" secureTextEntry={true} />
           <View
@@ -70,18 +113,18 @@ const Login = (props) => {
               </Text>
             </TouchableOpacity>
           </View>
-
+          <View style={{ marginTop: -75 }}></View>
           <Button
             textColor="white"
             bgColor={purple}
             btnLabel="Login as student"
-            Press={() => props.navigation.navigate("Tabs")}
+            Press={handleLoginStudent}
           />
           <Button
             textColor="white"
             bgColor={purple}
             btnLabel="Login as teacher"
-            Press={() => props.navigation.navigate("Dashboard")}
+            Press={handleLoginTeacher}
           />
           <View
             style={{
@@ -102,27 +145,9 @@ const Login = (props) => {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </SafeAreaView>
     </Background>
   );
 };
-
-const styles = StyleSheet.create({
-  imageBackground: {
-    flex: 1,
-    resizeMode: "cover",
-    justifyContent: "center",
-  },
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "white",
-  },
-});
 
 export default Login;

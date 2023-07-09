@@ -34,7 +34,7 @@ const StudentProfileScreen = () => {
         style={styles.profileImage}
       />
       <Text style={styles.nameText}>Name Here</Text>
-      <Text style={styles.roleText}>Staff</Text>
+      <Text style={styles.roleText}>Student</Text>
 
       <TouchableOpacity
         style={styles.button}

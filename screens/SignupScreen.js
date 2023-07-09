@@ -1,20 +1,60 @@
-import React from "react";
-import { View, Text, Touchable, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  Touchable,
+  TouchableOpacity,
+  SafeAreaView,
+} from "react-native";
 import Background from "../components/Background";
 import Button from "../components/Button";
-import { purple } from "../components/Constants";
+import { purple, yellow } from "../components/Constants";
 import Field from "../components/Field";
 
 const Signup = (props) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handleSignup = async () => {
+    if (email.endsWith("@u.nus.edu")) {
+      // Email ends with "@u.nus.edu", proceed with account creation
+      if (email === "" || password === "" || confirmPassword === "") {
+        alert("All fields are required");
+        return;
+      }
+      if (password === confirmPassword) {
+        // Passwords match, create the account
+        // You can perform the account creation logic here
+        //await axios.post("http://localhost:8080/api/signin", { email, password });
+        alert("Account created");
+        props.navigation.navigate("Login");
+      } else {
+        // Passwords do not match, show error message
+        alert("Passwords do not match");
+      }
+    } else {
+      // Email does not end with "@u.nus.edu", show error message
+      alert("Invalid email format. Please enter a valid @u.nus.edu email.");
+    }
+  };
   return (
     <Background>
-      <View style={{ alignItems: "center", width: 460 }}>
+      <SafeAreaView
+        style={{
+          alignItems: "center",
+          width: 460,
+          flex: 1,
+          justifyContent: "center",
+        }}
+      >
         <Text
           style={{
             color: "white",
             fontSize: 64,
             fontWeight: "bold",
             marginTop: 20,
+            textAlign: "center",
           }}
         >
           Register
@@ -31,7 +71,7 @@ const Signup = (props) => {
         </Text>
         <View
           style={{
-            backgroundColor: "white",
+            backgroundColor: yellow,
             height: 700,
             width: 460,
             borderTopLeftRadius: 130,
@@ -39,9 +79,24 @@ const Signup = (props) => {
             alignItems: "center",
           }}
         >
-          <Field placeholder="NUSNET Email" keyboardType={"email-address"} />
-          <Field placeholder="Password" secureTextEntry={true} />
-          <Field placeholder="Confirm Password" secureTextEntry={true} />
+          <Field
+            placeholder="NUSNET Email"
+            keyboardType={"email-address"}
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+          />
+          <Field
+            placeholder="Password"
+            secureTextEntry={true}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+          />
+          <Field
+            placeholder="Confirm Password"
+            secureTextEntry={true}
+            value={confirmPassword}
+            onChangeText={(text) => setConfirmPassword(text)}
+          />
           <View
             style={{
               display: "flex",
@@ -53,7 +108,14 @@ const Signup = (props) => {
             <Text style={{ color: "grey", fontSize: 16 }}>
               By signing in, you agree to our{" "}
             </Text>
-            <Text style={{ color: purple, fontWeight: "bold", fontSize: 16 }}>
+            <Text
+              style={{
+                color: purple,
+                fontWeight: "bold",
+                fontSize: 15,
+                textAlign: "center",
+              }}
+            >
               Terms & Conditions
             </Text>
           </View>
@@ -68,19 +130,24 @@ const Signup = (props) => {
               marginBottom: 10,
             }}
           >
-            <Text style={{ color: "grey", fontSize: 16 }}>and </Text>
-            <Text style={{ color: purple, fontWeight: "bold", fontSize: 16 }}>
+            <Text style={{ color: "grey", fontSize: 15 }}>and </Text>
+            <Text
+              style={{
+                color: purple,
+                fontWeight: "bold",
+                fontSize: 15,
+                textAlign: "center",
+              }}
+            >
               Privacy Policy
             </Text>
           </View>
+          <View style={{ marginTop: 100 }}></View>
           <Button
             textColor="white"
             bgColor={purple}
             btnLabel="Signup"
-            Press={() => {
-              alert("Account created");
-              props.navigation.navigate("Login");
-            }}
+            Press={handleSignup}
           />
           <View
             style={{
@@ -101,7 +168,7 @@ const Signup = (props) => {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </SafeAreaView>
     </Background>
   );
 };
