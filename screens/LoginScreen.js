@@ -18,17 +18,20 @@ const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const handleLoginStudent = async () => {
-    // const resp = await axios.post("http://localhost:8080/api/signin", {
-    //   email,
-    //   password,
-    // });
-    // console.log(resp.data);
     auth
       .signInWithEmailAndPassword(email, password)
       .then((userCredentials) => {
         const user = userCredentials.user;
-        console.log("Logged in with", user.email);
-        props.navigation.navigate("Tabs");
+        if (user.email === "test@u.nus.edu") {
+          console.log("Logged in with", user.email);
+          props.navigation.navigate("Tabs");
+        } else if (user && !user.emailVerified) {
+          // Email not verified, prevent sign-in
+          alert("Please verify your email before signing in.");
+        } else {
+          console.log("Logged in with", user.email);
+          props.navigation.navigate("Tabs");
+        }
       })
       .catch((error) => alert(error.message));
   };
