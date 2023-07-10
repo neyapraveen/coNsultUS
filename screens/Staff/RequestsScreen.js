@@ -92,8 +92,9 @@ const RequestsScreen = () => {
   const renderConsultationRequestItem = ({ item }) => (
     <View style={styles.requestItemContainer}>
       <View>
-        <Text style={styles.requestItemText}>Module: {item.Module.id}</Text>
         <Text style={styles.requestItemText}>Student: {item.Student}</Text>
+        <Text style={styles.requestItemText}>Module: {item.Module.id}</Text>
+
         <Text style={styles.requestItemText}>
           Date & Time:{" "}
           {item.Time.toDate().toLocaleString("en-GB", {

@@ -23,7 +23,7 @@ const StaffProfileScreen = () => {
     }
   };
   const handleViewPastConsultations = () => {
-    navigation.navigate("PastAppointments");
+    navigation.navigate("StaffPast");
   };
 
   const handleCancelledAppointments = () => {
@@ -34,8 +34,22 @@ const StaffProfileScreen = () => {
     navigation.navigate("ReportIssue");
   };
 
-  const handleResetPassword = () => {
-    navigation.navigate("ResetPw");
+  const currentUser = auth.currentUser;
+  const email = currentUser.email;
+
+  const handleResetPassword = async () => {
+    // Request password reset email
+    auth
+      .sendPasswordResetEmail(email)
+      .then(() => {
+        // Password reset email sent successfully
+        console.log("Password reset email sent");
+        alert("Password reset email sent.");
+      })
+      .catch((error) => {
+        // An error occurred while sending the password reset email
+        alert(error.message);
+      });
   };
 
   const handleLogout = async () => {
@@ -43,11 +57,8 @@ const StaffProfileScreen = () => {
       await auth.signOut();
       resetConsultationRequestStatus();
       navigation.navigate("Welcome");
-      // Perform any additional cleanup or navigation logic after successful logout
-      // For example, you can navigate to the login screen or clear the user context
     } catch (error) {
       console.error("Error logging out:", error);
-      // Handle any error that occurs during logout
     }
   };
 

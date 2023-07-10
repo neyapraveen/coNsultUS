@@ -9,9 +9,72 @@ import {
 } from "react-native";
 import { black, purple, yellow, white, grey } from "../../components/Constants";
 import { useNavigation } from "@react-navigation/native";
+import { db } from "../../firebase";
 
 const DashboardScreen = () => {
   const navigation = useNavigation();
+  const handleRequestsScreen = async () => {
+    try {
+      const currentTime = new Date(); // Get the current time
+
+      const snapshot1 = await db
+        .collection("consultationRequests")
+        .where("Time", "<", new Date())
+        .where("Status", "==", "")
+        .get();
+
+      const requestsToUpdate = [];
+
+      snapshot1.forEach((doc) => {
+        const request = doc.data();
+
+        // Compare the request time with the current time
+        if (request.Time.toDate() < currentTime) {
+          requestsToUpdate.push({
+            id: doc.id,
+            ...request,
+          });
+        }
+      });
+
+      // Update the status of the requests to "rejected"
+      for (const request of requestsToUpdate) {
+        await db.collection("consultationRequests").doc(request.id).update({
+          Status: "rejected",
+        });
+      }
+
+      // const snapshot2 = await db
+      //   .collection("consultationRequests")
+      //   .where("Status", "==", "accepted")
+      //   .get();
+
+      // const requestsPast = [];
+
+      // snapshot2.forEach((doc) => {
+      //   const request = doc.data();
+
+      //   // Compare the request time with the current time
+      //   if (request.Time.toDate() < currentTime) {
+      //     requestsPast.push({
+      //       id: doc.id,
+      //       ...request,
+      //     });
+      //   }
+      // });
+
+      // // Update the status of the requests to "accepted"
+      // for (const request of requestsPast) {
+      //   await db.collection("consultationRequests").doc(request.id).update({
+      //     Past: true,
+      //   });
+      // }
+
+      navigation.navigate("Requests");
+    } catch (error) {
+      console.error("Error updating consultation request status:", error);
+    }
+  };
 
   return (
     <>
@@ -81,7 +144,7 @@ const DashboardScreen = () => {
         <View style={styles.row}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate("Requests")}
+            onPress={handleRequestsScreen}
           >
             <Image
               style={{ width: 120, height: 120 }}

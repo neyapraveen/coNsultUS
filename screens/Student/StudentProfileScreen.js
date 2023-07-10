@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { grey, purple, black, yellow, white } from "../../components/Constants";
 import { useNavigation } from "@react-navigation/native";
+import { auth } from "../../firebase";
 
 const StudentProfileScreen = () => {
   const navigation = useNavigation();
@@ -18,12 +19,33 @@ const StudentProfileScreen = () => {
     navigation.navigate("ReportIssue");
   };
 
-  const handleResetPassword = () => {
-    navigation.navigate("ResetPw");
+  const currentUser = auth.currentUser;
+
+  // Retrieve the email address
+  const email = currentUser.email;
+
+  const handleResetPassword = async () => {
+    // Request password reset email
+    auth
+      .sendPasswordResetEmail(email)
+      .then(() => {
+        // Password reset email sent successfully
+        console.log("Password reset email sent");
+        alert("Password reset email sent.");
+      })
+      .catch((error) => {
+        // An error occurred while sending the password reset email
+        alert(error.message);
+      });
   };
 
-  const handleLogout = () => {
-    navigation.navigate("Welcome");
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      navigation.navigate("Welcome");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
   };
 
   return (

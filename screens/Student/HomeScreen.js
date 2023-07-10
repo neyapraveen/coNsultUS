@@ -15,6 +15,8 @@ import BookingContext from "../../components/BookingContext";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+  const [searchQuery, setSearchQuery] = useState("");
+
   const {
     selectedDate,
     setSelectedDate,
