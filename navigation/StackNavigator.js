@@ -16,6 +16,7 @@ import ResetPw from "../screens/ResetScreen";
 import PastAppointments from "../screens/PastAppointments";
 import RejectedAppointments from "../screens/RejectedAppointments";
 import ReportIssueScreen from "../screens/ReportIssue";
+import StaffRejectedAppointments from "../screens/Staff/StaffRejectedAppointments";
 
 import { UserContext } from "../components/UserContext";
 import BookingContext from "../components/BookingContext";
@@ -90,6 +91,11 @@ const StackNavigator = () => {
         <Stack.Screen
           name="StaffProfile"
           component={StaffProfileScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="StaffRejected"
+          component={StaffRejectedAppointments}
           options={{ headerShown: false }}
         />
         <Stack.Screen

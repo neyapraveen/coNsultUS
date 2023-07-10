@@ -1,14 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Agenda } from "react-native-calendars";
-import { grey, purple, yellow, black, white } from "../../components/Constants";
+import { db } from "../../firebase";
+import { grey, yellow, purple, white, black } from "../../components/Constants";
 
 const CalendarViewScreen = () => {
-  const agendaItems = {
-    "2023-07-19": [{ name: "John Doe", time: "10:00 AM" }],
-    "2023-07-22": [{ name: "Jane Smith", time: "02:00 PM" }],
-    "2023-07-02": [{ name: "Max Lee", time: "2:00 PM" }],
-  };
+  const [agendaItems, setAgendaItems] = useState({});
+
+  useEffect(() => {
+    const fetchConsultationRequests = async () => {
+      try {
+        const snapshot = await db
+          .collection("consultationRequests")
+          .where("Status", "==", "accepted")
+          .get();
+
+        const items = {};
+
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const date = data.Time.toDate().toISOString().split("T")[0];
+
+          if (!items[date]) {
+            items[date] = [];
+          }
+
+          items[date].push({
+            name: data.Student,
+            time: data.Time.toDate().toLocaleTimeString("en-US", {
+              hour: "numeric",
+              minute: "numeric",
+              hour12: true,
+            }),
+          });
+        });
+
+        setAgendaItems(items);
+      } catch (error) {
+        console.error("Error fetching consultation requests:", error);
+      }
+    };
+
+    fetchConsultationRequests();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -47,19 +81,8 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   itemText: {
-    color: "black",
+    color: black,
     fontSize: 16,
-  },
-  emptyDataContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 50,
-  },
-  emptyDataText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "gray",
   },
 });
 

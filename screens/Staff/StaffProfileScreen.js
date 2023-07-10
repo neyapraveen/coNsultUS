@@ -27,7 +27,7 @@ const StaffProfileScreen = () => {
   };
 
   const handleCancelledAppointments = () => {
-    navigation.navigate("RejectedAppointments");
+    navigation.navigate("StaffRejected");
   };
 
   const handleReportIssue = () => {

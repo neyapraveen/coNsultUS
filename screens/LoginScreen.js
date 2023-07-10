@@ -10,7 +10,6 @@ import Background from "../components/Background";
 import Button from "../components/Button";
 import { black, purple, yellow } from "../components/Constants";
 import Field from "../components/Field";
-import OfficeHoursScreen from "./Staff/OfficeHoursScreen";
 import { auth, db } from "../firebase";
 
 const Login = (props) => {
@@ -74,7 +73,7 @@ const Login = (props) => {
 
                   if (role === "Professor" || role === "TA") {
                     console.log("Logged in as Staff");
-                    props.navigation.navigate("OfficeHours");
+                    props.navigation.navigate("Dashboard");
                   } else {
                     alert("Invalid login credentials for staff.");
                   }
