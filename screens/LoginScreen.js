@@ -11,29 +11,86 @@ import Button from "../components/Button";
 import { black, purple, yellow } from "../components/Constants";
 import Field from "../components/Field";
 import OfficeHoursScreen from "./Staff/OfficeHoursScreen";
-import { auth } from "../firebase";
-// import axios from "axios";
+import { auth, db } from "../firebase";
 
 const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const handleLoginStudent = async () => {
     auth
       .signInWithEmailAndPassword(email, password)
       .then((userCredentials) => {
         const user = userCredentials.user;
-        if (user.email === "test@u.nus.edu") {
-          console.log("Logged in with", user.email);
-          props.navigation.navigate("Tabs");
-        } else if (user && !user.emailVerified) {
+        if (user && !user.emailVerified && email !== "test@u.nus.edu") {
           // Email not verified, prevent sign-in
           alert("Please verify your email before signing in.");
         } else {
-          console.log("Logged in with", user.email);
-          props.navigation.navigate("Tabs");
+          // Check the user's role
+          db.collection("users")
+            .where("Email", "==", email)
+            .get()
+            .then((querySnapshot) => {
+              if (!querySnapshot.empty) {
+                const userDoc = querySnapshot.docs[0];
+                const role = userDoc.data().Role;
+
+                if (role === "Student" || role === "TA") {
+                  console.log("Logged in as Student");
+                  props.navigation.navigate("Tabs");
+                } else {
+                  alert("Invalid login credentials for a student.");
+                }
+              } else {
+                alert("User not found.");
+              }
+            })
+            .catch((error) => {
+              console.error("Error getting user:", error);
+            });
         }
       })
       .catch((error) => alert(error.message));
+  };
+
+  const handleLoginTeacher = async () => {
+    if (email.endsWith("@u.nus.edu")) {
+      auth
+        .signInWithEmailAndPassword(email, password)
+        .then((userCredentials) => {
+          const user = userCredentials.user;
+          if (user && !user.emailVerified && email !== "test@u.nus.edu") {
+            // Email not verified, prevent sign-in
+            alert("Please verify your email before signing in.");
+          } else {
+            // Check the user's role
+            db.collection("users")
+              .where("Email", "==", email)
+              .get()
+              .then((querySnapshot) => {
+                if (!querySnapshot.empty) {
+                  const userDoc = querySnapshot.docs[0];
+                  const role = userDoc.data().Role;
+
+                  if (role === "Professor" || role === "TA") {
+                    console.log("Logged in as Staff");
+                    props.navigation.navigate("OfficeHours");
+                  } else {
+                    alert("Invalid login credentials for staff.");
+                  }
+                } else {
+                  alert("User not found.");
+                }
+              })
+              .catch((error) => {
+                console.error("Error getting user:", error);
+              });
+          }
+        })
+        .catch((error) => alert(error.message));
+    } else {
+      alert("Invalid email format. Please enter a valid @u.nus.edu email.");
+    }
   };
 
   const handleResetPassword = async () => {
@@ -49,18 +106,6 @@ const Login = (props) => {
         // An error occurred while sending the password reset email
         alert(error.message);
       });
-  };
-
-  const handleLoginTeacher = () => {
-    if (email.endsWith("@u.nus.edu")) {
-      // Email ends with "@u.nus.edu", proceed with login
-      // You can perform the login logic here
-      props.navigation.navigate("OfficeHours");
-      alert("Logged In as Teacher");
-    } else {
-      // Email does not end with "@u.nus.edu", show error message
-      alert("Invalid email format. Please enter a valid @u.nus.edu email.");
-    }
   };
 
   return (
