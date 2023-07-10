@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { grey, purple, black, yellow, white } from "../../components/Constants";
 import { useNavigation } from "@react-navigation/native";
 
 const StudentProfileScreen = () => {
   const navigation = useNavigation();
+
   const handleViewPastConsultations = () => {
     navigation.navigate("PastAppointments");
   };

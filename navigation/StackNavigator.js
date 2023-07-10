@@ -17,6 +17,7 @@ import PastAppointments from "../screens/PastAppointments";
 import RejectedAppointments from "../screens/RejectedAppointments";
 import ReportIssueScreen from "../screens/ReportIssue";
 
+import { UserContext } from "../components/UserContext";
 import BookingContext from "../components/BookingContext";
 import { RequestsProvider } from "../components/RequestsContext";
 

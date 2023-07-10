@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
@@ -10,12 +10,22 @@ import Background from "../components/Background";
 import Button from "../components/Button";
 import { purple, yellow } from "../components/Constants";
 import Field from "../components/Field";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 
 const Signup = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const createUser = async (userData) => {
+    try {
+      await db.collection("users").add(userData);
+      console.log("User created successfully");
+    } catch (error) {
+      console.error("Error creating user:", error);
+    }
+  };
 
   const handleSignup = async () => {
     if (email.endsWith("@u.nus.edu")) {
@@ -26,7 +36,6 @@ const Signup = (props) => {
       }
       if (password === confirmPassword) {
         // Passwords match, create the account
-        //await axios.post("http://localhost:8080/api/signin", { email, password });
         alert("Account created");
         auth
           .createUserWithEmailAndPassword(email, password)
@@ -39,6 +48,14 @@ const Signup = (props) => {
           })
           .catch((error) => alert(error.message));
 
+        createUser({
+          Name: name,
+          Email: email,
+          Role: "Student",
+          Modules: ["CS2030S, CS1101S"],
+        });
+
+        console.log("Signed up as", name);
         props.navigation.navigate("Login");
       } else {
         // Passwords do not match, show error message
@@ -90,6 +107,11 @@ const Signup = (props) => {
             alignItems: "center",
           }}
         >
+          <Field
+            placeholder="Full Name"
+            value={name}
+            onChangeText={(text) => setName(text)}
+          />
           <Field
             placeholder="NUSNET Email"
             keyboardType={"email-address"}
