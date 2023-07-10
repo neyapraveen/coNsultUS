@@ -2,9 +2,26 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { grey, purple, black, yellow, white } from "../../components/Constants";
 import { useNavigation } from "@react-navigation/native";
+import { auth, db } from "../../firebase";
 
 const StaffProfileScreen = () => {
   const navigation = useNavigation();
+  const resetConsultationRequestStatus = async () => {
+    try {
+      const consultationRequestsRef = db.collection("consultationRequests");
+      const batch = db.batch();
+
+      const snapshot = await consultationRequestsRef.get();
+      snapshot.forEach((doc) => {
+        batch.update(doc.ref, { Status: "" });
+      });
+
+      await batch.commit();
+      console.log("Consultation request statuses reset successfully");
+    } catch (error) {
+      console.error("Error resetting consultation request statuses:", error);
+    }
+  };
   const handleViewPastConsultations = () => {
     navigation.navigate("PastAppointments");
   };
@@ -21,8 +38,17 @@ const StaffProfileScreen = () => {
     navigation.navigate("ResetPw");
   };
 
-  const handleLogout = () => {
-    navigation.navigate("Welcome");
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      resetConsultationRequestStatus();
+      navigation.navigate("Welcome");
+      // Perform any additional cleanup or navigation logic after successful logout
+      // For example, you can navigate to the login screen or clear the user context
+    } catch (error) {
+      console.error("Error logging out:", error);
+      // Handle any error that occurs during logout
+    }
   };
 
   return (
