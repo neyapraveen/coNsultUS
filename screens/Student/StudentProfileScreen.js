@@ -2,10 +2,11 @@ import React, { useState, useEffect, useContext } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { grey, purple, black, yellow, white } from "../../components/Constants";
 import { useNavigation } from "@react-navigation/native";
-import { auth } from "../../firebase";
+import { auth, db } from "../../firebase";
 
 const StudentProfileScreen = () => {
   const navigation = useNavigation();
+  const [name, setName] = useState('');
 
   const handleViewPastConsultations = () => {
     navigation.navigate("PastAppointments");
@@ -20,9 +21,21 @@ const StudentProfileScreen = () => {
   };
 
   const currentUser = auth.currentUser;
-
-  // Retrieve the email address
   const email = currentUser.email;
+
+  useEffect(() => {
+    const unsubscribe = db
+      .collection("users")
+      .where("Email", "==", email)
+      .onSnapshot((snapshot) => {
+        snapshot.forEach((doc) => {
+          const userData = doc.data();
+          setName(userData.Name);
+        });
+      });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleResetPassword = async () => {
     // Request password reset email
@@ -56,7 +69,7 @@ const StudentProfileScreen = () => {
         }}
         style={styles.profileImage}
       />
-      <Text style={styles.nameText}>Name Here</Text>
+      <Text style={styles.nameText}>{name}</Text>
       <Text style={styles.roleText}>Student</Text>
 
       <TouchableOpacity

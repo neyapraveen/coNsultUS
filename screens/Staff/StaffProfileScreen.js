@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { grey, purple, black, yellow, white } from "../../components/Constants";
 import { useNavigation } from "@react-navigation/native";
@@ -6,6 +6,8 @@ import { auth, db } from "../../firebase";
 
 const StaffProfileScreen = () => {
   const navigation = useNavigation();
+  const [name, setName] = useState('');
+
   const resetConsultationRequestStatus = async () => {
     try {
       const consultationRequestsRef = db.collection("consultationRequests");
@@ -22,6 +24,7 @@ const StaffProfileScreen = () => {
       console.error("Error resetting consultation request statuses:", error);
     }
   };
+
   const handleViewPastConsultations = () => {
     navigation.navigate("StaffPast");
   };
@@ -36,6 +39,21 @@ const StaffProfileScreen = () => {
 
   const currentUser = auth.currentUser;
   const email = currentUser.email;
+
+  useEffect(() => {
+    const unsubscribe = db
+      .collection("users")
+      .where("Email", "==", email)
+      .where("Role", "in", ["Professor", "TA"])
+      .onSnapshot((snapshot) => {
+        snapshot.forEach((doc) => {
+          const staffData = doc.data();
+          setName(staffData.Name);
+        });
+      });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleResetPassword = async () => {
     // Request password reset email
@@ -70,7 +88,7 @@ const StaffProfileScreen = () => {
         }}
         style={styles.profileImage}
       />
-      <Text style={styles.nameText}>Name Here</Text>
+      <Text style={styles.nameText}>{name}</Text>
       <Text style={styles.roleText}>Staff</Text>
 
       <TouchableOpacity
@@ -84,7 +102,7 @@ const StaffProfileScreen = () => {
         style={styles.button}
         onPress={handleCancelledAppointments}
       >
-        <Text style={styles.buttonText}>Cancelled Appointments</Text>
+        <Text style={styles.buttonText}>Rejected Appointments</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.button} onPress={handleReportIssue}>
