@@ -31,7 +31,7 @@ const HomeScreen = () => {
   const handlePressStaff = (item) => {
     if (selectedID.includes(item.id)) {
       // Staff is already selected, unselect it
-      setSelectedID(selectedID.filter((id) => id !== item.id));
+      setSelectedID([]);
       setSelectedModule("");
       setSelectedStaff("");
     } else {
@@ -264,7 +264,12 @@ const HomeScreen = () => {
             </Text>
           </View>
 
-          <Pressable onPress={() => navigation.navigate("Booking")}>
+          <Pressable
+            onPress={() => {
+              navigation.navigate("Booking");
+              setSelectedID([]);
+            }}
+          >
             <Text style={{ fontSize: 20, fontWeight: "800", color: "white" }}>
               Continue
             </Text>
