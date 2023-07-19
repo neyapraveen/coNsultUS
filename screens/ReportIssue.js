@@ -1,26 +1,93 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 import Background from "../components/Background";
 import { purple, grey, yellow, black, white } from "../components/Constants";
 import { useNavigation } from "@react-navigation/native";
-import { db } from "../firebase";
+import { db, auth } from "../firebase";
+import axios from "axios";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
 
 const ReportIssueScreen = () => {
   const [issue, setIssue] = useState("");
+  const [name, setName] = useState(''); // Move useState inside the component
   const navigation = useNavigation();
+
+  // Get the current user's email
+  const currentUser = auth.currentUser;
+  const email = currentUser ? currentUser.email : null;
+
+  // Function to get the current user's name from Firestore
+  const getCurrentUserName = async () => {
+    if (currentUser) {
+      try {
+        const userDoc = await db.collection("users").where("Email", "==", email).get();
+        if (!userDoc.empty) {
+          userDoc.forEach((doc) => {
+            const data = doc.data();
+            setName(data.Name);
+          });
+        } else {
+          setName("Unknown"); // Return a default name if the user's name is not found
+        }
+      } catch (error) {
+        console.error("Error getting user name:", error);
+        setName("Unknown"); // Return a default name in case of an error
+      }
+    } else {
+      setName("Unknown"); // Return a default name if the current user is not authenticated
+    }
+  };
+
+  useEffect(() => {
+    getCurrentUserName(); // Call the function to get the user's name
+  }, []);
 
   const handleReportIssue = async () => {
     // Handle reporting the issue logic here
+    const userName = name;
     const issueData = {
       issue: issue.trim(),
     };
     await db.collection("feedback").add(issueData);
     console.log("Issue reported successfully:", issueData);
+    const emailContent = `Issue: ${issueData.issue}<br><br>Reported by: ${userName}`;
+  
+    // Get the current timestamp and format it to a readable string
+    const currentTimestamp = new Date().toLocaleString();
+  
+    // Send the issue as an email
+    try {
+      const apiKey = "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";
+      const baseUrl = "https://api.sendinblue.com/v3/smtp/email";
+  
+      const data = {
+        to: [{ email: "consultusnus@gmail.com" }],
+        subject: `Reported Issue in coNsultUS App - ${currentTimestamp}`, // Include the timestamp in the subject
+        htmlContent: emailContent,
+        sender: { email: "consultusnus@gmail.com" },
+      };
+  
+      const config = {
+        headers: {
+          "api-key": apiKey,
+          "Content-Type": "application/json",
+        },
+      };
+  
+      const response = await axios.post(baseUrl, data, config);
+      console.log("Email sent successfully:", response.data);
+    } catch (error) {
+      console.error("Error sending email:", error);
+    }
+  
     // Reset the input field
-    alert("feedback sent!")
+    alert("Feedback sent!");
     setIssue("");
     navigation.navigate("Dashboard");
   };
+  
+  
 
   const isSubmitButtonDisabled = issue.trim() === "";
 

@@ -3,15 +3,14 @@ import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 import Background from "../../components/Background";
 import { grey, yellow, white } from "../../components/Constants";
 import { useNavigation } from "@react-navigation/native";
-import { db } from "../../firebase";
+import { db, auth } from "../../firebase";
 import axios from "axios";
-import firebase from "firebase/compat";
 
 const AnnouncementsScreen = () => {
   const [announcement, setAnnouncement] = useState("");
   const navigation = useNavigation();
-  const currentUser = firebase.auth().currentUser;
-  const userEmailAddress = currentUser ? currentUser.email : "";
+  const currentUser = auth.currentUser;
+  const userEmailAddress = currentUser ? currentUser.email : null;
 
   useEffect(() => {
     fetchProfessorModules();
@@ -25,12 +24,12 @@ const AnnouncementsScreen = () => {
       const snapshot = await modulesRef
         .where("Professors", "array-contains", userEmailAddress)
         .get();
-  
+
       const modulesData = snapshot.docs.map((doc) => doc.data());
       setProfessorModules(modulesData);
-  
+
       console.log("Professor Modules:", modulesData);
-  
+
       // Additional logging to check the complete "Students" array for each module
       modulesData.forEach((module) => {
         console.log("Students for Module:", module.Students);
@@ -39,8 +38,21 @@ const AnnouncementsScreen = () => {
       console.error("Error fetching professor modules:", error);
     }
   };
-  
-  
+
+  const getCurrentUserData = async () => {
+    try {
+      const userDoc = await db.collection("users").where("Email", "==", userEmailAddress).get();
+      if (!userDoc.empty) {
+        const userData = userDoc.docs[0].data();
+        return userData;
+      } else {
+        return null; // Return null if user data is not found
+      }
+    } catch (error) {
+      console.error("Error getting user data:", error);
+      return null; // Return null in case of an error
+    }
+  };
 
   const handleSendAnnouncement = async () => {
     try {
@@ -59,14 +71,26 @@ const AnnouncementsScreen = () => {
 
       console.log("Recipients:", recipientsArray); // Check the recipients array
 
-      // Send email to each unique student in the recipientsArray
-      const sendPromises = recipientsArray.map((recipient) =>
-        sendEmail(recipient, announcement)
-          .then((response) => ({ status: "fulfilled", value: response }))
-          .catch((error) => ({ status: "rejected", reason: error }))
-      );
+      // Get the current user's data (including name and role)
+      const userData = await getCurrentUserData();
 
-      //console.log("Send Promises:", sendPromises); // Check the sendPromises array
+      // Check if the userData is not null and contains the required fields (Name and Role)
+      if (userData && userData.Name && userData.Role) {
+        // Extract the user's name and role from the data
+        const userName = userData.Name;
+        const userRole = userData.Role;
+
+        // Create the email subject with the user's role and name
+        const emailSubject = `Important Announcement - ${userRole} ${userName}`;
+
+        // Send email to each unique student in the recipientsArray
+        const sendPromises = recipientsArray.map((recipient) =>
+          sendEmail(recipient, announcement, emailSubject)
+            .then((response) => ({ status: "fulfilled", value: response }))
+            .catch((error) => ({ status: "rejected", reason: error }))
+        );
+
+        //console.log("Send Promises:", sendPromises); // Check the sendPromises array
 
       // Wait for all emails to be sent
       const results = await Promise.all(sendPromises);
@@ -74,20 +98,24 @@ const AnnouncementsScreen = () => {
       //console.log("Results:", results); // Check the results of email sending
 
       // Reset the input field
+      alert("Announcement sent via email!");
       setAnnouncement("");
       navigation.navigate("Dashboard");
+      } else {
+        console.error("User data not found or incomplete.");
+      }
     } catch (error) {
       console.error("Error sending announcement:", error);
     }
   };
 
-  const sendEmail = async (recipient, body) => {
+  const sendEmail = async (recipient, body, subject) => {
     const apiKey = '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';
     const baseUrl = 'https://api.sendinblue.com/v3/smtp/email';
 
     const data = {
       to: [{ email: recipient }],
-      subject: "Important Announcement",
+      subject: subject,
       htmlContent: body,
       sender: { email: 'consultusnus@gmail.com' }, 
     };
@@ -185,3 +213,4 @@ const styles = StyleSheet.create({
 });
 
 export default AnnouncementsScreen;
+
