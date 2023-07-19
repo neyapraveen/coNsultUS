@@ -12,12 +12,31 @@ import React, { useState, useContext, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import BookingContext from "../../components/BookingContext";
-import { db } from "../../firebase";
+import { auth, db } from "../../firebase";
+
+// Import profile images
+const profileImages = [
+  require("../../assets/StudentPhotos/Picture1.png"),
+  require("../../assets/StudentPhotos/Picture2.png"),
+  require("../../assets/StudentPhotos/Picture3.png"),
+  require("../../assets/StudentPhotos/Picture4.png"),
+  require("../../assets/StudentPhotos/Picture5.png"),
+  require("../../assets/StudentPhotos/Picture6.png"),
+  require("../../assets/StudentPhotos/Picture7.png"),
+  require("../../assets/StudentPhotos/Picture8.png"),
+  require("../../assets/StudentPhotos/Picture9.png"),
+  require("../../assets/StudentPhotos/Picture10.png"),
+  require("../../assets/StudentPhotos/Picture11.png"),
+  require("../../assets/StudentPhotos/Picture12.png"),
+];
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
   const [staffData, setStaffData] = useState([]);
+  const [selectedImageIndex, setSelectedImageIndex] = useState();
+  const [selectedID, setSelectedID] = useState([]);
+  const [name, setName] = useState("");
 
   const {
     selectedDate,
@@ -30,7 +49,9 @@ const HomeScreen = () => {
     setSelectedModule,
   } = useContext(BookingContext);
 
-  const [selectedID, setSelectedID] = useState([]);
+  // Fetch the user's data from Firebase
+  const currentUser = auth.currentUser;
+  const email = currentUser.email;
 
   useEffect(() => {
     // Fetch staff data from Firestore and update the staffData state
@@ -43,6 +64,18 @@ const HomeScreen = () => {
       .catch((error) => {
         console.error("Error fetching staff data: ", error);
       });
+    const unsubscribe = db
+      .collection("users")
+      .where("Email", "==", email)
+      .onSnapshot((snapshot) => {
+        snapshot.forEach((doc) => {
+          const userData = doc.data();
+          setName(userData.Name);
+          setSelectedImageIndex(userData.ProfileImageIndex || 0);
+        });
+      });
+
+    return () => unsubscribe();
   }, []);
 
   const handlePressStaff = (item) => {
@@ -175,10 +208,8 @@ const HomeScreen = () => {
             style={{ marginLeft: "auto", marginRight: 7 }}
           >
             <Image
-              style={{ width: 40, height: 40, borderRadius: 20 }}
-              source={{
-                uri: "https://cdn-icons-png.flaticon.com/512/3135/3135823.png",
-              }}
+              style={{ width: 60, height: 60, borderRadius: 7 }}
+              source={profileImages[selectedImageIndex]}
             />
           </Pressable>
         </View>

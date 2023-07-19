@@ -4,9 +4,85 @@ import { grey, purple, black, yellow, white } from "../../components/Constants";
 import { useNavigation } from "@react-navigation/native";
 import { auth, db } from "../../firebase";
 
+// Import profile images
+const profileImages = [
+  require("../../assets/StudentPhotos/Picture1.png"),
+  require("../../assets/StudentPhotos/Picture2.png"),
+  require("../../assets/StudentPhotos/Picture3.png"),
+  require("../../assets/StudentPhotos/Picture4.png"),
+  require("../../assets/StudentPhotos/Picture5.png"),
+  require("../../assets/StudentPhotos/Picture6.png"),
+  require("../../assets/StudentPhotos/Picture7.png"),
+  require("../../assets/StudentPhotos/Picture8.png"),
+  require("../../assets/StudentPhotos/Picture9.png"),
+  require("../../assets/StudentPhotos/Picture10.png"),
+  require("../../assets/StudentPhotos/Picture11.png"),
+  require("../../assets/StudentPhotos/Picture12.png"),
+];
+
 const StudentProfileScreen = () => {
   const navigation = useNavigation();
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  // Fetch the user's data from Firebase
+  const currentUser = auth.currentUser;
+  const email = currentUser.email;
+
+  useEffect(() => {
+    const unsubscribe = db
+      .collection("users")
+      .where("Email", "==", email)
+      .onSnapshot((snapshot) => {
+        snapshot.forEach((doc) => {
+          const userData = doc.data();
+          setName(userData.Name);
+          // Assuming the "ProfileImageIndex" field is saved in the database
+          setSelectedImageIndex(userData.ProfileImageIndex || 0);
+        });
+      });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Function to update the user's name in Firebase
+  const updateName = async (newName) => {
+    try {
+      await db.collection("users").doc(email).update({
+        Name: newName,
+      });
+    } catch (error) {
+      console.error("Error updating name:", error);
+    }
+  };
+
+  // Function to handle the right arrow button press
+  const handleNextImage = () => {
+    const nextIndex = (selectedImageIndex + 1) % profileImages.length;
+    setSelectedImageIndex(nextIndex);
+    updateProfileImageIndex(nextIndex);
+  };
+
+  // Function to handle the left arrow button press
+  const handlePreviousImage = () => {
+    const prevIndex =
+      selectedImageIndex === 0
+        ? profileImages.length - 1
+        : selectedImageIndex - 1;
+    setSelectedImageIndex(prevIndex);
+    updateProfileImageIndex(prevIndex);
+  };
+
+  // Function to update the user's profile image index in Firebase
+  const updateProfileImageIndex = async (newIndex) => {
+    try {
+      await db.collection("users").doc(email).update({
+        ProfileImageIndex: newIndex,
+      });
+    } catch (error) {
+      console.error("Error updating profile image index:", error);
+    }
+  };
 
   const handleViewPastConsultations = () => {
     navigation.navigate("PastAppointments");
@@ -19,23 +95,6 @@ const StudentProfileScreen = () => {
   const handleReportIssue = () => {
     navigation.navigate("ReportIssue");
   };
-
-  const currentUser = auth.currentUser;
-  const email = currentUser.email;
-
-  useEffect(() => {
-    const unsubscribe = db
-      .collection("users")
-      .where("Email", "==", email)
-      .onSnapshot((snapshot) => {
-        snapshot.forEach((doc) => {
-          const userData = doc.data();
-          setName(userData.Name);
-        });
-      });
-
-    return () => unsubscribe();
-  }, []);
 
   const handleResetPassword = async () => {
     // Request password reset email
@@ -61,14 +120,65 @@ const StudentProfileScreen = () => {
     }
   };
 
+  const handleChooseProfileImage = () => {
+    const options = {
+      title: "Select Profile Picture",
+      storageOptions: {
+        skipBackup: true,
+        path: "images",
+      },
+    };
+
+    ImagePicker.showImagePicker(options, (response) => {
+      if (response.didCancel) {
+        console.log("User cancelled image picker");
+      } else if (response.error) {
+        console.log("ImagePicker Error: ", response.error);
+      } else if (response.customButton) {
+        console.log("User tapped custom button: ", response.customButton);
+      } else {
+        // Set the selected profile image
+        setProfileImage(response.uri);
+      }
+    });
+  };
+
+  const handleEditProfile = () => {
+    // Here, you can add a form or modal to allow users to edit their name and profile picture.
+    // Then, you can save the updated name and profile picture URI to the Firebase database.
+    // For example, you can create a form or modal to get the user's updated name and selected profile picture URI
+    // and then update the Firebase database with the new data.
+    // Sample code to update the Firebase database:
+    // db.collection("users").doc(currentUser.uid).update({
+    //   Name: updatedName,
+    //   ProfileImage: profileImage,
+    // }).then(() => {
+    //   console.log("Profile updated successfully");
+    //   Alert.alert("Profile updated successfully");
+    // }).catch((error) => {
+    //   console.error("Error updating profile:", error);
+    //   Alert.alert("Error updating profile");
+    // });
+  };
+
   return (
     <View style={styles.container}>
-      <Image
-        source={{
-          uri: "https://cdn-icons-png.flaticon.com/512/3135/3135823.png",
-        }}
-        style={styles.profileImage}
-      />
+      <View style={styles.imageContainer}>
+        <TouchableOpacity
+          onPress={handlePreviousImage}
+          style={styles.arrowButton}
+        >
+          <Text style={styles.arrowText}>{"<"}</Text>
+        </TouchableOpacity>
+        <Image
+          source={profileImages[selectedImageIndex]}
+          style={styles.profileImage}
+        />
+        <TouchableOpacity onPress={handleNextImage} style={styles.arrowButton}>
+          <Text style={styles.arrowText}>{">"}</Text>
+        </TouchableOpacity>
+      </View>
+
       <Text style={styles.nameText}>{name}</Text>
       <Text style={styles.roleText}>Student</Text>
 
@@ -106,6 +216,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: grey,
+  },
+  imageContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  arrowButton: {
+    padding: 10,
+  },
+  arrowText: {
+    fontSize: 24,
   },
   profileImage: {
     width: 150,
