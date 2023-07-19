@@ -10,7 +10,7 @@ const CalendarScreen = () => {
   const navigation = useNavigation();
   const { selectedDate, selectedTime, selectedStaff, selectedModule } =
     useContext(BookingContext);
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState({});
   // Function to force re-render of Agenda
   const handleForceRerender = () => {
     setAgendaKey(Date.now().toString());
@@ -28,28 +28,7 @@ const CalendarScreen = () => {
         key: `${date}-${selectedStaff}-${false}`, // Create a unique key
       };
 
-      if (newItems[date]) {
-        // Check if the event with the same staff already exists
-        const existingEventIndex = newItems[date].findIndex(
-          (event) => event.staff === selectedStaff
-        );
-        if (existingEventIndex !== -1) {
-          // Replace the existing event
-          newItems[date][existingEventIndex] = event;
-        } else {
-          // Add a new event
-          newItems[date].push(event);
-        }
-        // Sort the events by time
-        newItems[date].sort((a, b) => {
-          if (a.time && b.time) {
-            return a.time.localeCompare(b.time);
-          }
-          return 0;
-        });
-      } else {
-        newItems[date] = [event];
-      }
+      newItems[date] = [event];
 
       return newItems;
     });
