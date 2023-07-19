@@ -3,15 +3,21 @@ import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 import Background from "../components/Background";
 import { purple, grey, yellow, black, white } from "../components/Constants";
 import { useNavigation } from "@react-navigation/native";
+import { db } from "../firebase";
 
 const ReportIssueScreen = () => {
   const [issue, setIssue] = useState("");
   const navigation = useNavigation();
 
-  const handleReportIssue = () => {
+  const handleReportIssue = async () => {
     // Handle reporting the issue logic here
-    console.log("Reporting issue:", issue);
+    const issueData = {
+      issue: issue.trim(),
+    };
+    await db.collection("feedback").add(issueData);
+    console.log("Issue reported successfully:", issueData);
     // Reset the input field
+    alert("feedback sent!")
     setIssue("");
     navigation.navigate("Dashboard");
   };
@@ -53,22 +59,22 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   heading: {
-    fontSize: 52,
+    fontSize: 50,
     fontWeight: "bold",
-    marginTop: 20,
-    marginBottom: 10,
+    marginTop: 50,
+    marginBottom: 40,
     color: yellow,
     padding: 10,
   },
   inputContainer: {
     width: "100%",
-    marginBottom: 20,
+    marginBottom: 75,
     backgroundColor: grey,
     borderRadius: 20,
     marginLeft: 10,
   },
   input: {
-    height: 200,
+    height: 400,
     borderColor: "#ccc",
     borderRadius: 5,
     padding: 10,
