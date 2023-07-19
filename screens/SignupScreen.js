@@ -115,18 +115,21 @@ const Signup = (props) => {
           <Field
             placeholder="NUSNET Email"
             keyboardType={"email-address"}
+            autoCapitalize="none"
             value={email}
             onChangeText={(text) => setEmail(text)}
           />
           <Field
             placeholder="Password"
             secureTextEntry={true}
+            autoCapitalize="none"
             value={password}
             onChangeText={(text) => setPassword(text)}
           />
           <Field
             placeholder="Confirm Password"
             secureTextEntry={true}
+            autoCapitalize="none"
             value={confirmPassword}
             onChangeText={(text) => setConfirmPassword(text)}
           />
