@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     marginTop: 10,
-    fontSize: 24,
+    fontSize: 23,
     fontWeight: "bold",
     textAlign: "center",
   },
