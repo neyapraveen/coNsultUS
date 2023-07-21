@@ -92,15 +92,15 @@ const AnnouncementsScreen = () => {
 
         //console.log("Send Promises:", sendPromises); // Check the sendPromises array
 
-      // Wait for all emails to be sent
-      const results = await Promise.all(sendPromises);
+        // Wait for all emails to be sent
+        const results = await Promise.all(sendPromises);
 
-      //console.log("Results:", results); // Check the results of email sending
+        //console.log("Results:", results); // Check the results of email sending
 
-      // Reset the input field
-      alert("Announcement sent via email!");
-      setAnnouncement("");
-      navigation.navigate("Dashboard");
+        // Reset the input field
+        alert("Announcement sent via email!");
+        setAnnouncement("");
+        navigation.navigate("Dashboard");
       } else {
         console.error("User data not found or incomplete.");
       }
@@ -117,7 +117,7 @@ const AnnouncementsScreen = () => {
       to: [{ email: recipient }],
       subject: subject,
       htmlContent: body,
-      sender: { email: 'consultusnus@gmail.com' }, 
+      sender: { email: 'consultusnus@gmail.com' },
     };
 
     const config = {

@@ -1,3 +1,71 @@
+// import React, { useState, useContext } from "react";
+// import {
+//   View,
+//   Text,
+//   Touchable,
+//   TouchableOpacity,
+//   SafeAreaView,
+// } from "react-native";
+// import Background from "../components/Background";
+// import Button from "../components/Button";
+// import { purple, yellow } from "../components/Constants";
+// import Field from "../components/Field";
+// import { auth, db } from "../firebase";
+
+// const Signup = (props) => {
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [name, setName] = useState("");
+//   const [confirmPassword, setConfirmPassword] = useState("");
+
+//   const createUser = async (userData) => {
+//     try {
+//       await db.collection("users").add(userData);
+//       console.log("User created successfully");
+//     } catch (error) {
+//       console.error("Error creating user:", error);
+//     }
+//   };
+
+//   const handleSignup = async () => {
+//     if (email.endsWith("@u.nus.edu")) {
+//       // Email ends with "@u.nus.edu", proceed with account creation
+//       if (email === "" || password === "" || confirmPassword === "") {
+//         alert("All fields are required");
+//         return;
+//       }
+//       if (password === confirmPassword) {
+//         // Passwords match, create the account
+//         alert("Account created");
+//         auth
+//           .createUserWithEmailAndPassword(email, password)
+//           .then((userCredentials) => {
+//             const user = userCredentials.user;
+//             console.log("User registered with" & user.email);
+//             user.sendEmailVerification().then(() => {
+//               console.log("Confirmation email sent");
+//             });
+//           })
+//           .catch((error) => alert(error.message));
+
+//         createUser({
+//           Name: name,
+//           Email: email,
+//           Role: "Student",
+//           Modules: ["CS2030S", "CS1101S"],
+//         });
+
+//         console.log("Signed up as", name);
+//         props.navigation.navigate("Login");
+//       } else {
+//         // Passwords do not match, show error message
+//         alert("Passwords do not match");
+//       }
+//     } else {
+//       // Email does not end with "@u.nus.edu", show error message
+//       alert("Invalid email format. Please enter a valid @u.nus.edu email.");
+//     }
+//   };
 import React, { useState, useContext } from "react";
 import {
   View,
@@ -27,6 +95,53 @@ const Signup = (props) => {
     }
   };
 
+  const checkIfUserExistsAndCreate = async (name, email) => {
+    try {
+      // Query the "users" collection for documents with the given email
+      const usersRef = db.collection("users");
+      const querySnapshot = await usersRef.where("Email", "==", email).get();
+
+      // Check if any matching documents were found
+      if (querySnapshot.empty) {
+        // No matching documents found, so create a new user document with the "Student" role
+        await createUser({
+          Name: name,
+          Email: email,
+          Role: "Student",
+          Modules: ["CS2030S", "CS1101S"],
+        });
+
+        console.log("User created successfully!");
+        return false; // Return false to indicate user does not exist
+      } else {
+        // User exists, check the role of the user
+        let userRole = ""; // Variable to store the user's role
+
+        querySnapshot.forEach((doc) => {
+          const userData = doc.data();
+          userRole = userData.Role;
+        });
+
+        // Check the user's role and take appropriate actions
+        if (userRole === "Student") {
+          // User is already registered as a student
+          console.log("User already exists as a student!");
+          props.navigate
+        } else if (userRole === "TA" || userRole === "Professor") {
+          // User is registered as a TA or Professor, send authentication email but don't add data again
+          console.log("User already exists as a TA or Professor!");
+          return true; // Return true to indicate user exists
+        } else {
+        }
+
+        return true; // Return true to indicate user exists
+      }
+    } catch (error) {
+      console.error("Error checking if user exists:", error);
+      return true; // Return true to indicate error occurred (or handle error differently)
+    }
+  };
+
   const handleSignup = async () => {
     if (email.endsWith("@u.nus.edu")) {
       // Email ends with "@u.nus.edu", proceed with account creation
@@ -48,15 +163,10 @@ const Signup = (props) => {
           })
           .catch((error) => alert(error.message));
 
-        createUser({
-          Name: name,
-          Email: email,
-          Role: "Student",
-          Modules: ["CS2030S, CS1101S"],
-        });
-
-        console.log("Signed up as", name);
-        props.navigation.navigate("Login");
+        // Check if the user exists and handle based on the role
+        const userExists = await checkIfUserExistsAndCreate(name, email);
+          console.log("Signed up as", name);
+          props.navigation.navigate("Login");
       } else {
         // Passwords do not match, show error message
         alert("Passwords do not match");
@@ -66,6 +176,7 @@ const Signup = (props) => {
       alert("Invalid email format. Please enter a valid @u.nus.edu email.");
     }
   };
+
   return (
     <Background>
       <SafeAreaView

@@ -33,6 +33,7 @@ const Login = (props) => {
               if (!querySnapshot.empty) {
                 const userDoc = querySnapshot.docs[0];
                 const role = userDoc.data().Role;
+                console.log(role);
 
                 if (role === "Student" || role === "TA") {
                   console.log("Logged in as Student");
