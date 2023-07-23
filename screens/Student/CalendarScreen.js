@@ -5,53 +5,103 @@ import BookingContext from "../../components/BookingContext";
 import { purple, grey, white, yellow, black } from "../../components/Constants";
 import moment from "moment";
 import { useNavigation } from "@react-navigation/native";
+import { db, auth } from "../../firebase";
+import firebase from "firebase/compat";
+
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = (1 + date.getMonth()).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+
+  return year + "-" + month + "-" + day;
+}
 
 const CalendarScreen = () => {
   const navigation = useNavigation();
   const { selectedDate, selectedTime, selectedStaff, selectedModule } =
     useContext(BookingContext);
   const [items, setItems] = useState({});
-  // Function to force re-render of Agenda
-  const handleForceRerender = () => {
-    setAgendaKey(Date.now().toString());
-  };
+  const [currentUserEmail, setCurrentUserEmail] = useState("");
 
-  // Function to add an event to the agenda
-  const addEventToAgenda = (date, time, moduleName) => {
-    setItems((prevItems) => {
-      const newItems = { ...prevItems };
-
-      const event = {
-        text: `${time} ${selectedStaff} (${moduleName})`,
-        staff: selectedStaff,
-        isCancelled: false,
-        key: `${date}-${selectedStaff}-${false}`, // Create a unique key
-      };
-
-      newItems[date] = [event];
-
-      return newItems;
-    });
-  };
+  // Fetch the user's data from Firebase
+  const currentUser = auth.currentUser;
+  const email = currentUser.email;
 
   useEffect(() => {
-    if (selectedDate && selectedTime && selectedModule) {
-      addEventToAgenda(selectedDate, selectedTime, selectedModule);
-    }
-  }, [selectedDate, selectedTime, selectedModule]);
+    // Assume you have a function to fetch consultation requests for the current user
+    const fetchConsultationRequests = async () => {
+      try {
+        const consultationRef = db.collection("consultationRequests");
+        const snapshot = await consultationRef
+          .where("Email", "==", currentUser.email)
+          .get();
+        const newItems = {};
 
-  const handleCancelPress = (item, staff) => {
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const date = formatDate(data.Time.toDate());
+          const time = data.Time.toDate().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          const event = {
+            text: `${time} ${data.Staff} (${data.Module.id})`,
+            staff: data.Staff,
+            isCancelled: data.Status === "rejected",
+            key: doc.id,
+            status: data.Status,
+          };
+
+          if (!newItems[date]) {
+            newItems[date] = [];
+          }
+
+          newItems[date].push(event);
+        });
+
+        setItems(newItems);
+      } catch (error) {
+        console.error("Error fetching consultation requests: ", error);
+      }
+    };
+
+    // Fetch the data when currentUserEmail is available
+    if (currentUser.email) {
+      fetchConsultationRequests();
+    }
+  }, [currentUser.email]);
+
+  const handleCancelPress = async (item) => {
     Alert.alert(
       "Confirmation",
-      `Are you sure you want to cancel your meeting with ${staff}?`,
+      `Are you sure you want to cancel your meeting with ${item.Staff}?`,
       [
         {
           text: "Yes",
-          onPress: () => {
-            item.isCancelled = true;
-            handleForceRerender;
-            Alert.alert("Booking cancelled");
-            navigation.navigate("Home");
+          onPress: async () => {
+            try {
+              // Update the Status to "rejected" in Firestore
+              const consultationRef = db.collection("consultationRequests");
+              const docRef = consultationRef.doc(item.key);
+              const doc = await docRef.get();
+
+              if (!doc.exists) {
+                console.error("Document not found! id:", item.id);
+                return;
+              }
+
+              await docRef.update({ Status: "rejected" });
+
+              // Update the event's appearance to show it as cancelled
+              item.isCancelled = true;
+              item.status = "rejected";
+              Alert.alert("Booking cancelled");
+              console.log("Booking ", item.key, " cancelled");
+              navigation.navigate("Home");
+            } catch (error) {
+              console.error("Error cancelling booking: ", error);
+            }
           },
         },
         {
@@ -75,9 +125,15 @@ const CalendarScreen = () => {
       <View
         style={[
           styles.eventContainer,
-          { backgroundColor: item.isCancelled ? grey : yellow },
+          {
+            backgroundColor:
+              item.status == "rejected"
+                ? grey
+                : item.status == "accepted"
+                ? yellow
+                : purple,
+          },
         ]}
-        key={item.key}
       >
         <Text
           style={[
@@ -92,7 +148,7 @@ const CalendarScreen = () => {
         ) : (
           <TouchableOpacity
             style={styles.cancelButton}
-            onPress={() => handleCancelPress(item, item.staff)}
+            onPress={() => handleCancelPress(item)}
           >
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>

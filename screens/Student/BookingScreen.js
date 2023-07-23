@@ -125,6 +125,7 @@ const BookingScreen = () => {
         })
         .then((docRef) => {
           console.log("Document written with ID: ", docRef.id);
+          console.log(selectedDateTime, selectedModule, selectedStaff, email);
           setSelectedDate("");
           setSelectedTime([]);
           setSelectedStaff("");

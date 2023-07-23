@@ -3,8 +3,10 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { Agenda } from "react-native-calendars";
 import { db } from "../../firebase";
 import { grey, yellow, purple, white, black } from "../../components/Constants";
+import { useNavigation } from "@react-navigation/native";
 
 const CalendarViewScreen = () => {
+  const navigation = useNavigation();
   const [agendaItems, setAgendaItems] = useState({});
   const [consultationRequests, setConsultationRequests] = useState([]);
 
@@ -27,8 +29,9 @@ const CalendarViewScreen = () => {
           }
 
           items[date].push({
-            id: doc.id, // Add the document ID for reference when canceling
+            id: doc.id,
             name: data.Student,
+            module: data.Module.id,
             time: data.Time.toDate().toLocaleTimeString("en-US", {
               hour: "numeric",
               minute: "numeric",
@@ -49,7 +52,7 @@ const CalendarViewScreen = () => {
   const handleCancelPress = (request) => {
     Alert.alert(
       "Confirmation",
-      `Are you sure you want to cancel the consultation with ${request.Student}?`,
+      `Are you sure you want to cancel the consultation with ${request.name}?`,
       [
         {
           text: "Yes",
@@ -74,6 +77,8 @@ const CalendarViewScreen = () => {
               );
               setConsultationRequests(updatedRequests);
               alert("Request Cancelled");
+              console.log("Booking ", docRef.id, " cancelled");
+              navigation.navigate("Dashboard");
             } catch (error) {
               console.error("Error cancelling consultation request:", error);
             }
@@ -90,8 +95,9 @@ const CalendarViewScreen = () => {
   const renderItem = (item) => {
     return (
       <View style={styles.itemContainer}>
-        <Text style={styles.itemText}>{item.name}</Text>
         <Text style={styles.itemText}>{item.time}</Text>
+        <Text style={styles.itemText}>{item.name}</Text>
+        <Text style={styles.itemText}>{item.module}</Text>
         <TouchableOpacity
           style={styles.cancelButton}
           onPress={() => handleCancelPress(item)}
@@ -137,7 +143,8 @@ const styles = StyleSheet.create({
   },
   itemText: {
     color: black,
-    fontSize: 16,
+    fontSize: 15,
+    fontWeight: "bold",
   },
   cancelButton: {
     backgroundColor: "pink",
