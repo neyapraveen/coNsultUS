@@ -12,6 +12,7 @@ import React, { useState, useContext } from "react";
 import HorizontalDatepicker from "@awrminkhodaei/react-native-horizontal-datepicker";
 import { useNavigation } from "@react-navigation/native";
 import BookingContext from "../../components/BookingContext";
+import { setDate } from "date-fns";
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -41,25 +42,39 @@ const ConfirmButton = ({ onPress }) => {
 const BookingScreen = () => {
   const navigation = useNavigation();
   const {
-    selectedDate,
-    setSelectedDate,
-    selectedTime,
-    setSelectedTime,
     selectedStaff,
     setSelectedStaff,
     selectedModule,
     setSelectedModule,
+    setSelectedDate,
+    setSelectedTime,
+    selectedDate,
+    selectedTime,
   } = useContext(BookingContext);
+  const [dateChoice, setDateChoice] = useState([]);
+  const [timeChoice, setTimeChoice] = useState([]);
   const [selectedSession, setSelectedSession] = useState([]);
   const [selectedType, setSelectedType] = useState([]);
 
   const handleConfirmation = () => {
+    setSelectedDate(dateChoice);
+    setSelectedTime(timeChoice);
+
     if (
       selectedDate &&
       selectedTime.length > 0 &&
       selectedStaff &&
       selectedModule
     ) {
+      console.log(
+        "Booking:",
+        selectedDate,
+        selectedTime,
+        selectedModule,
+        selectedSession,
+        selectedStaff,
+        selectedType
+      );
       setSelectedDate("");
       setSelectedTime([]);
       setSelectedStaff("");
@@ -116,7 +131,7 @@ const BookingScreen = () => {
   ];
 
   let startDate = new Date();
-  startDate.setDate(startDate.getDate() + 2);
+  startDate.setDate(startDate.getDate() + 1);
   let endDate = new Date();
   endDate.setDate(endDate.getDate() + 14);
 
@@ -182,7 +197,7 @@ const BookingScreen = () => {
               mode="gregorian"
               startDate={startDate}
               endDate={endDate}
-              onSelectedDateChange={(date) => setSelectedDate(formatDate(date))}
+              onSelectedDateChange={(date) => setDateChoice(formatDate(date))}
               selectedItemWidth={170}
               unselectedItemWidth={38}
               itemHeight={38}
@@ -206,9 +221,9 @@ const BookingScreen = () => {
               {times.map((item, index) => (
                 <Pressable
                   key={item.id}
-                  onPress={() => setSelectedTime(item.time)}
+                  onPress={() => setTimeChoice(item.time)}
                   style={
-                    selectedTime.includes(item.time)
+                    timeChoice.includes(item.time)
                       ? {
                           margin: 10,
                           borderRadius: 7,
@@ -225,7 +240,7 @@ const BookingScreen = () => {
                 >
                   <Text
                     style={
-                      selectedTime.includes(item.time)
+                      timeChoice.includes(item.time)
                         ? { color: "white" }
                         : { color: "black" }
                     }
@@ -324,8 +339,8 @@ const BookingScreen = () => {
 
         {/* Continuation Prompt */}
         <>
-          {selectedDate &&
-            selectedTime.length > 0 &&
+          {dateChoice &&
+            timeChoice.length > 0 &&
             selectedStaff &&
             selectedModule && (
               <Pressable

@@ -9,6 +9,7 @@ export const BookingProvider = ({ children }) => {
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedStaff, setSelectedStaff] = useState("");
   const [selectedModule, setSelectedModule] = useState("");
+  const [events, setEvents] = useState({});
 
   return (
     <BookingContext.Provider
@@ -21,6 +22,8 @@ export const BookingProvider = ({ children }) => {
         setSelectedStaff,
         selectedModule,
         setSelectedModule,
+        events,
+        setEvents,
       }}
     >
       {children}
