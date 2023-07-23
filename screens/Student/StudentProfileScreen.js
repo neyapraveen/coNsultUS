@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { grey, purple, black, yellow, white } from "../../components/Constants";
 import { useNavigation } from "@react-navigation/native";
 import { auth, db } from "../../firebase";
+import ImagePicker from "react-native-image-picker";
 
 // Import profile images
 const profileImages = [
@@ -45,22 +46,22 @@ const StudentProfileScreen = () => {
     return () => unsubscribe();
   }, []);
 
-  // Function to update the user's name in Firebase
-  const updateName = async (newName) => {
-    try {
-      await db.collection("users").doc(email).update({
-        Name: newName,
-      });
-    } catch (error) {
-      console.error("Error updating name:", error);
-    }
-  };
+  // // Function to update the user's name in Firebase
+  // const updateName = async (newName) => {
+  //   try {
+  //     await db.collection("users").doc(email).update({
+  //       Name: newName,
+  //     });
+  //   } catch (error) {
+  //     console.error("Error updating name:", error);
+  //   }
+  // };
 
   // Function to handle the right arrow button press
   const handleNextImage = () => {
     const nextIndex = (selectedImageIndex + 1) % profileImages.length;
     setSelectedImageIndex(nextIndex);
-    updateProfileImageIndex(nextIndex);
+    updateProfileImageIndex(email, nextIndex);
   };
 
   // Function to handle the left arrow button press
@@ -70,19 +71,31 @@ const StudentProfileScreen = () => {
         ? profileImages.length - 1
         : selectedImageIndex - 1;
     setSelectedImageIndex(prevIndex);
-    updateProfileImageIndex(prevIndex);
+    updateProfileImageIndex(email, prevIndex);
   };
 
   // Function to update the user's profile image index in Firebase
-  const updateProfileImageIndex = async (newIndex) => {
+  const updateProfileImageIndex = async (email, newIndex) => {
     try {
-      await db.collection("users").doc(email).update({
-        ProfileImageIndex: newIndex,
+      // Query the users collection for documents where the Email field matches the provided email
+      const querySnapshot = await db.collection("users").where("Email", "==", email).get();
+  
+      // Loop through the query results and update the ProfileImageIndex field in each matching document
+      const batch = db.batch();
+      querySnapshot.forEach((doc) => {
+        const userRef = db.collection("users").doc(doc.id);
+        batch.update(userRef, { ProfileImageIndex: newIndex });
+        //console.log(userRef);
       });
+  
+      // Commit the batch update
+      await batch.commit();
+      console.log("Profile image index updated successfully for all matching documents.");
     } catch (error) {
       console.error("Error updating profile image index:", error);
     }
   };
+  
 
   const handleViewPastConsultations = () => {
     navigation.navigate("PastAppointments");
@@ -138,7 +151,10 @@ const StudentProfileScreen = () => {
         console.log("User tapped custom button: ", response.customButton);
       } else {
         // Set the selected profile image
-        setProfileImage(response.uri);
+        setSelectedImageIndex(response.uri);
+
+        // Update the user's profile image index in Firebase
+        updateProfileImageIndex(email, response.uri);
       }
     });
   };
