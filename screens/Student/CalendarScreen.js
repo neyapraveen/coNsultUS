@@ -28,13 +28,19 @@ const CalendarScreen = () => {
   const email = currentUser.email;
 
   useEffect(() => {
-    // Assume you have a function to fetch consultation requests for the current user
-    const fetchConsultationRequests = async () => {
-      try {
-        const consultationRef = db.collection("consultationRequests");
-        const snapshot = await consultationRef
-          .where("Email", "==", currentUser.email)
-          .get();
+    const unsubscribe = fetchConsultationRequests();
+
+    // Clean up the listener when the component unmounts
+    return () => unsubscribe();
+  }, []);
+
+  const fetchConsultationRequests = () => {
+    try {
+      const consultationRef = db.collection("consultationRequests");
+      const query = consultationRef.where("Email", "==", currentUser.email);
+
+      // Listen for changes in the Firestore collection
+      return query.onSnapshot((snapshot) => {
         const newItems = {};
 
         snapshot.forEach((doc) => {
@@ -61,21 +67,16 @@ const CalendarScreen = () => {
         });
 
         setItems(newItems);
-      } catch (error) {
-        console.error("Error fetching consultation requests: ", error);
-      }
-    };
-
-    // Fetch the data when currentUserEmail is available
-    if (currentUser.email) {
-      fetchConsultationRequests();
+      });
+    } catch (error) {
+      console.error("Error fetching consultation requests: ", error);
     }
-  }, [currentUser.email]);
+  };
 
   const handleCancelPress = async (item) => {
     Alert.alert(
       "Confirmation",
-      `Are you sure you want to cancel your meeting with ${item.Staff}?`,
+      `Are you sure you want to cancel your meeting with ${item.staff}?`,
       [
         {
           text: "Yes",
@@ -98,6 +99,7 @@ const CalendarScreen = () => {
               item.status = "rejected";
               Alert.alert("Booking cancelled");
               console.log("Booking ", item.key, " cancelled");
+              renderItem(item);
               navigation.navigate("Home");
             } catch (error) {
               console.error("Error cancelling booking: ", error);

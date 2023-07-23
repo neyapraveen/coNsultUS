@@ -130,13 +130,13 @@ const BookingScreen = () => {
           setSelectedTime([]);
           setSelectedStaff("");
           setSelectedModule("");
-          navigation.navigate("Calendar");
+          navigation.navigate("Home");
         })
         .catch((error) => {
           console.error("Error adding document: ", error);
         });
     } else {
-      console.log("Please select all the required fields");
+      console.log("Please wait for event to show up in calendar");
     }
   };
 

@@ -27,7 +27,7 @@ const RequestsScreen = () => {
         const snapshot = await db
           .collection("consultationRequests")
           .where("Status", "==", "")
-          // .where("Staff", "==", "Dr.Test")
+          .where("Staff", "==", "Dr. Test")
           .get();
         const requests = snapshot.docs.map((doc) => ({
           id: doc.id, // Add this line to include the document ID
