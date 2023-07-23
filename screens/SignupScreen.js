@@ -104,11 +104,13 @@ const Signup = (props) => {
       // Check if any matching documents were found
       if (querySnapshot.empty) {
         // No matching documents found, so create a new user document with the "Student" role
+        const randomProfileImageIndex = Math.floor(Math.random() * 12) + 1;
         await createUser({
           Name: name,
           Email: email,
           Role: "Student",
           Modules: ["CS2030S", "CS1101S"],
+          ProfileImageIndex: randomProfileImageIndex,
         });
 
         console.log("User created successfully!");
