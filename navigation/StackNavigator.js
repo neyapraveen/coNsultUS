@@ -1,27 +1,39 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import TabNavigator from "./TabNavigator";
+
+{
+  /*Startup Screens*/
+}
 import WelcomeScreen from "../screens/WelcomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignupScreen";
+import ResetPw from "../screens/ResetScreen";
+
+{
+  /*Student Screens*/
+}
+import TabNavigator from "./TabNavigator";
 import BookingScreen from "../screens/Student/BookingScreen";
 import StudentProfileScreen from "../screens/Student/StudentProfileScreen";
+import PastAppointments from "../screens/Student/PastAppointments";
+import RejectedAppointments from "../screens/Student/RejectedAppointments";
+import ReportIssue from "../screens/Student/ReportIssue";
+
+{
+  /*Staff Screens*/
+}
 import DashboardScreen from "../screens/Staff/DashboardScreen";
-import OfficeHoursScreen from "../screens/Staff/OfficeHoursScreen";
 import CalendarViewScreen from "../screens/Staff/CalendarViewScreen";
+import OfficeHoursScreen from "../screens/Staff/OfficeHoursScreen";
 import RequestsScreen from "../screens/Staff/RequestsScreen";
-import StaffProfileScreen from "../screens/Staff/StaffProfileScreen";
 import AnnouncementsScreen from "../screens/Staff/AnnouncementsScreen";
-import ResetPw from "../screens/ResetScreen";
-import PastAppointments from "../screens/PastAppointments";
-import RejectedAppointments from "../screens/RejectedAppointments";
-import ReportIssueScreen from "../screens/ReportIssue";
-import StaffRejectedAppointments from "../screens/Staff/StaffRejectedAppointments";
+import StaffProfileScreen from "../screens/Staff/StaffProfileScreen";
 import StaffPastAppointments from "../screens/Staff/StaffPastAppointments";
+import StaffRejectedAppointments from "../screens/Staff/StaffRejectedAppointments";
+import StaffReportIssue from "../screens/Staff/StaffReportIssue";
 
 import { UserContext } from "../components/UserContext";
 import BookingContext from "../components/BookingContext";
-import { RequestsProvider } from "../components/RequestsContext";
 
 const Stack = createStackNavigator();
 
@@ -105,6 +117,11 @@ const StackNavigator = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
+          name="StaffReportIssue"
+          component={StaffReportIssue}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
           name="CalendarView"
           component={CalendarViewScreen}
           options={{ headerShown: false }}
@@ -131,7 +148,7 @@ const StackNavigator = () => {
         />
         <Stack.Screen
           name="ReportIssue"
-          component={ReportIssueScreen}
+          component={ReportIssue}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

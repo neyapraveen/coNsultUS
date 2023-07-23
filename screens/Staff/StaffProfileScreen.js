@@ -6,7 +6,7 @@ import { auth, db } from "../../firebase";
 
 const StaffProfileScreen = () => {
   const navigation = useNavigation();
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
 
   const resetConsultationRequestStatus = async () => {
     try {
@@ -34,7 +34,7 @@ const StaffProfileScreen = () => {
   };
 
   const handleReportIssue = () => {
-    navigation.navigate("ReportIssue");
+    navigation.navigate("StaffReportIssue");
   };
 
   const currentUser = auth.currentUser;

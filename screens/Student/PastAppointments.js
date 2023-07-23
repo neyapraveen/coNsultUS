@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { purple, grey, yellow, black, white } from "../components/Constants";
+import { purple, grey, yellow, black, white } from "../../components/Constants";
 
-const RejectedAppointments = () => {
-  // Fake data for rejected appointments
-  const rejectedAppointments = [
+const PastAppointments = () => {
+  // Fake data for past appointments
+  const pastAppointments = [
     {
       professor: "John Doe",
       student: "Alice Smith",
@@ -12,7 +12,6 @@ const RejectedAppointments = () => {
       time: "10:00 AM",
       mode: "In Person",
       duration: "1 hour",
-      reason: "Clash with other meetings",
     },
     {
       professor: "Jane Smith",
@@ -21,7 +20,6 @@ const RejectedAppointments = () => {
       time: "2:30 PM",
       mode: "Online",
       duration: "45 minutes",
-      reason: "Student unresponsive",
     },
     {
       professor: "David Brown",
@@ -30,7 +28,6 @@ const RejectedAppointments = () => {
       time: "9:00 AM",
       mode: "In Person",
       duration: "1.5 hours",
-      reason: "Personal emergency",
     },
     {
       professor: "Sarah Green",
@@ -39,17 +36,16 @@ const RejectedAppointments = () => {
       time: "4:00 PM",
       mode: "Online",
       duration: "30 minutes",
-      reason: "Clash with other meetings",
     },
   ];
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.heading}>Rejected Appointments</Text>
-      {rejectedAppointments.length === 0 ? (
-        <Text style={styles.placeholder}>No rejected appointments found</Text>
+      <Text style={styles.heading}>Past Consultation Appointments</Text>
+      {pastAppointments.length === 0 ? (
+        <Text style={styles.placeholder}>No past appointments found</Text>
       ) : (
-        rejectedAppointments.map((appointment, index) => (
+        pastAppointments.map((appointment, index) => (
           <View style={styles.appointmentContainer} key={index}>
             <Text style={[styles.title, styles.bold]}>Professor:</Text>
             <Text style={styles.text}>{appointment.professor}</Text>
@@ -60,19 +56,16 @@ const RejectedAppointments = () => {
             <Text style={[styles.title, styles.bold]}>Date:</Text>
             <Text style={styles.text}>{appointment.date}</Text>
 
-            <Text style={[styles.title, styles.bold]}>Time:</Text>
+            <Text style={styles.title}>Time:</Text>
             <Text style={styles.text}>{appointment.time}</Text>
 
-            <Text style={[styles.title, styles.bold]}>Mode:</Text>
+            <Text style={styles.title}>Mode:</Text>
             <Text style={styles.text}>{appointment.mode}</Text>
 
-            <Text style={[styles.title, styles.bold]}>Duration:</Text>
+            <Text style={styles.title}>Duration:</Text>
             <Text style={styles.text}>{appointment.duration}</Text>
 
-            <Text style={[styles.title, styles.bold]}>Reason:</Text>
-            <Text style={styles.text}>{appointment.reason}</Text>
-
-            {index < rejectedAppointments.length - 1 && (
+            {index < pastAppointments.length - 1 && (
               <View style={styles.separator} />
             )}
           </View>
@@ -122,4 +115,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RejectedAppointments;
+export default PastAppointments;
