@@ -107,7 +107,7 @@ const DashboardScreen = () => {
           <Image
             style={{ width: 40, height: 40, borderRadius: 20 }}
             source={{
-              uri: "https://cdn-icons-png.flaticon.com/512/3135/3135823.png",
+              uri: "https://img.freepik.com/free-icon/man_318-157595.jpg",
             }}
           />
         </Pressable>

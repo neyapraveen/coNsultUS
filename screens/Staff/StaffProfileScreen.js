@@ -84,7 +84,7 @@ const StaffProfileScreen = () => {
     <View style={styles.container}>
       <Image
         source={{
-          uri: "https://cdn-icons-png.flaticon.com/512/3135/3135823.png",
+          uri: "https://img.freepik.com/free-icon/man_318-157595.jpg",
         }}
         style={styles.profileImage}
       />

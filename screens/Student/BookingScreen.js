@@ -8,11 +8,26 @@ import {
   Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import HorizontalDatepicker from "@awrminkhodaei/react-native-horizontal-datepicker";
 import { useNavigation } from "@react-navigation/native";
 import BookingContext from "../../components/BookingContext";
-import { setDate } from "date-fns";
+import { db, auth } from "../../firebase";
+import firebase from "firebase/compat";
+
+// Function to parse the time string to extract hours and minutes
+function parseTime(timeString) {
+  const [time, modifier] = timeString.split(" ");
+  const [hours, minutes] = time.split(":");
+
+  let parsedHours = parseInt(hours, 10);
+  if (modifier === "PM" && parsedHours !== 12) {
+    parsedHours += 12;
+  } else if (modifier === "AM" && parsedHours === 12) {
+    parsedHours = 0;
+  }
+  return { hours: parsedHours, minutes: parseInt(minutes, 10) };
+}
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -51,10 +66,29 @@ const BookingScreen = () => {
     selectedDate,
     selectedTime,
   } = useContext(BookingContext);
+  const [name, setName] = useState("");
   const [dateChoice, setDateChoice] = useState([]);
   const [timeChoice, setTimeChoice] = useState([]);
   const [selectedSession, setSelectedSession] = useState([]);
   const [selectedType, setSelectedType] = useState([]);
+
+  // Fetch the user's data from Firebase
+  const currentUser = auth.currentUser;
+  const email = currentUser.email;
+
+  useEffect(() => {
+    const unsubscribe = db
+      .collection("users")
+      .where("Email", "==", email)
+      .onSnapshot((snapshot) => {
+        snapshot.forEach((doc) => {
+          const userData = doc.data();
+          setName(userData.Name);
+        });
+      });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleConfirmation = () => {
     setSelectedDate(dateChoice);
@@ -66,20 +100,40 @@ const BookingScreen = () => {
       selectedStaff &&
       selectedModule
     ) {
-      console.log(
-        "Booking:",
-        selectedDate,
-        selectedTime,
-        selectedModule,
-        selectedSession,
-        selectedStaff,
-        selectedType
+      // Create a new document in the "consultationRequests" collection
+      const consultationRef = db.collection("consultationRequests");
+
+      // Parse selectedTime to extract hours and minutes
+      const { hours, minutes } = parseTime(selectedTime);
+
+      // Combine selectedDate, hours, and minutes to create a new Date object
+      const selectedDateTime = new Date(
+        `${selectedDate}T${hours.toString().padStart(2, "0")}:${minutes
+          .toString()
+          .padStart(2, "0")}:00`
       );
-      setSelectedDate("");
-      setSelectedTime([]);
-      setSelectedStaff("");
-      setSelectedModule("");
-      navigation.navigate("Calendar");
+
+      consultationRef
+        .add({
+          Module: firebase.firestore().doc(`/modules/${selectedModule}`),
+          Past: false,
+          Status: "",
+          Student: name,
+          Time: firebase.firestore.Timestamp.fromDate(selectedDateTime),
+          Email: email, // Replace this with the actual user's email or get it from the authentication data
+          Staff: selectedStaff,
+        })
+        .then((docRef) => {
+          console.log("Document written with ID: ", docRef.id);
+          setSelectedDate("");
+          setSelectedTime([]);
+          setSelectedStaff("");
+          setSelectedModule("");
+          navigation.navigate("Calendar");
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
+        });
     } else {
       console.log("Please select all the required fields");
     }
