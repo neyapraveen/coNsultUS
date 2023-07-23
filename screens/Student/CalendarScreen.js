@@ -51,6 +51,7 @@ const CalendarScreen = () => {
             item.isCancelled = true;
             handleForceRerender;
             Alert.alert("Booking cancelled");
+            navigation.navigate("Home");
           },
         },
         {
