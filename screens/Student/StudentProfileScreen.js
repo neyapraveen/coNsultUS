@@ -78,8 +78,11 @@ const StudentProfileScreen = () => {
   const updateProfileImageIndex = async (email, newIndex) => {
     try {
       // Query the users collection for documents where the Email field matches the provided email
-      const querySnapshot = await db.collection("users").where("Email", "==", email).get();
-  
+      const querySnapshot = await db
+        .collection("users")
+        .where("Email", "==", email)
+        .get();
+
       // Loop through the query results and update the ProfileImageIndex field in each matching document
       const batch = db.batch();
       querySnapshot.forEach((doc) => {
@@ -87,22 +90,15 @@ const StudentProfileScreen = () => {
         batch.update(userRef, { ProfileImageIndex: newIndex });
         //console.log(userRef);
       });
-  
+
       // Commit the batch update
       await batch.commit();
-      console.log("Profile image index updated successfully for all matching documents.");
+      console.log(
+        "Profile image index updated successfully for all matching documents."
+      );
     } catch (error) {
       console.error("Error updating profile image index:", error);
     }
-  };
-  
-
-  const handleViewPastConsultations = () => {
-    navigation.navigate("PastAppointments");
-  };
-
-  const handleCancelledAppointments = () => {
-    navigation.navigate("RejectedAppointments");
   };
 
   const handleReportIssue = () => {
@@ -197,20 +193,6 @@ const StudentProfileScreen = () => {
 
       <Text style={styles.nameText}>{name}</Text>
       <Text style={styles.roleText}>Student</Text>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleViewPastConsultations}
-      >
-        <Text style={styles.buttonText}>View Past Consultations</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleCancelledAppointments}
-      >
-        <Text style={styles.buttonText}>Cancelled Appointments</Text>
-      </TouchableOpacity>
 
       <TouchableOpacity style={styles.button} onPress={handleReportIssue}>
         <Text style={styles.buttonText}>Report an Issue</Text>

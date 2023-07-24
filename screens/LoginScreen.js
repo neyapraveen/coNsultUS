@@ -21,7 +21,12 @@ const Login = (props) => {
       .signInWithEmailAndPassword(email, password)
       .then((userCredentials) => {
         const user = userCredentials.user;
-        if (user && !user.emailVerified && email !== "test@u.nus.edu") {
+        if (
+          user &&
+          !user.emailVerified &&
+          email !== "test@u.nus.edu" &&
+          email !== "student.teacher@u.nus.edu"
+        ) {
           // Email not verified, prevent sign-in
           alert("Please verify your email before signing in.");
         } else {
@@ -59,7 +64,12 @@ const Login = (props) => {
         .signInWithEmailAndPassword(email, password)
         .then((userCredentials) => {
           const user = userCredentials.user;
-          if (user && !user.emailVerified && email !== "test@u.nus.edu") {
+          if (
+            user &&
+            !user.emailVerified &&
+            email !== "test@u.nus.edu" &&
+            email !== "student.teacher@u.nus.edu"
+          ) {
             // Email not verified, prevent sign-in
             alert("Please verify your email before signing in.");
           } else {

@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 import { View, Image } from "react-native";
 import Background from "../components/Background";
 import Button from "../components/Button";
@@ -33,8 +33,8 @@ const Welcome = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginHorizontal: 40,
     marginVertical: 100,
   },
